@@ -1,12 +1,28 @@
+require('dotenv').config();
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const { createClient } = require('@supabase/supabase-js');
 
 const PORT = process.env.PORT || 3000;
 const BASE_DIR = __dirname;
 const DATA_FILE = path.join(BASE_DIR, 'data', 'technicians.json');
 const REVIEWS_FILE = path.join(BASE_DIR, 'data', 'reviews.json');
+
+const SUPABASE_URL = process.env.SUPABASE_URL || '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
+
+let supabase = null;
+try {
+  if (SUPABASE_URL && (SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY)) {
+    supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY);
+    console.log('[ArConnect] Supabase conectado:', SUPABASE_URL);
+  }
+} catch (e) {
+  console.warn('[ArConnect] Aviso: falha ao inicializar cliente Supabase:', e.message);
+}
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -73,13 +89,42 @@ function saveReviews(list) {
   }
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = decodeURIComponent(parsedUrl.pathname);
+
+  // CONFIG API (for frontend to consume public Supabase credentials)
+  if (pathname === '/api/config') {
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-cache'
+    });
+    return res.end(JSON.stringify({
+      supabaseUrl: SUPABASE_URL,
+      supabaseAnonKey: SUPABASE_ANON_KEY
+    }));
+  }
 
   // API TECHNICIANS
   if (pathname === '/api/technicians') {
     if (req.method === 'GET') {
+      if (supabase) {
+        try {
+          const { data, error } = await supabase
+            .from('technicians')
+            .select('*')
+            .order('avaliacao', { ascending: false });
+          if (!error && data && data.length > 0) {
+            res.writeHead(200, {
+              'Content-Type': 'application/json; charset=utf-8',
+              'Cache-Control': 'no-cache'
+            });
+            return res.end(JSON.stringify(data));
+          }
+        } catch (err) {
+          // Fallback to local
+        }
+      }
       const list = getTechnicians();
       res.writeHead(200, {
         'Content-Type': 'application/json; charset=utf-8',
@@ -91,13 +136,12 @@ const server = http.createServer((req, res) => {
     if (req.method === 'POST') {
       let body = '';
       req.on('data', chunk => { body += chunk; });
-      req.on('end', () => {
+      req.on('end', async () => {
         try {
           const tech = JSON.parse(body);
           const list = getTechnicians();
           
           if (tech.id) {
-            // Edit existing
             const index = list.findIndex(t => String(t.id) === String(tech.id));
             if (index !== -1) {
               list[index] = { ...list[index], ...tech };
@@ -105,7 +149,6 @@ const server = http.createServer((req, res) => {
               list.push(tech);
             }
           } else {
-            // Add new
             tech.id = Date.now().toString();
             tech.avaliacao = tech.avaliacao || "5.0";
             tech.atendimentos = tech.atendimentos || 1;
@@ -114,6 +157,29 @@ const server = http.createServer((req, res) => {
           }
 
           saveTechnicians(list);
+
+          // Salvar também no Supabase se disponível
+          if (supabase) {
+            try {
+              await supabase.from('technicians').upsert({
+                nome: tech.nome,
+                especialidade: tech.especialidade,
+                descricao: tech.descricao || '',
+                categorias: tech.categorias || [],
+                cep: tech.cep || '',
+                bairro: tech.bairro || 'Manaus',
+                whatsapp: tech.whatsapp,
+                foto: tech.foto || '',
+                avaliacao: parseFloat(tech.avaliacao) || 5.0,
+                atendimentos: parseInt(tech.atendimentos) || 0,
+                urgente: !!tech.urgente,
+                verificado: tech.verificado !== false
+              });
+            } catch (supErr) {
+              console.warn('[Supabase] Falha ao persistir técnico:', supErr.message);
+            }
+          }
+
           res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
           return res.end(JSON.stringify({ success: true, technician: tech }));
         } catch (err) {
@@ -135,18 +201,44 @@ const server = http.createServer((req, res) => {
       list = list.filter(t => String(t.id) !== String(id));
       saveTechnicians(list);
 
+      if (supabase) {
+        try {
+          await supabase.from('technicians').delete().eq('id', id);
+        } catch (supErr) {
+          console.warn('[Supabase] Falha ao deletar no Supabase:', supErr.message);
+        }
+      }
+
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       return res.end(JSON.stringify({ success: true }));
     }
   }
 
-  // API REVIEWS (Only clients leave reviews)
+  // API REVIEWS
   if (pathname === '/api/reviews') {
     if (req.method === 'GET') {
       const techId = parsedUrl.searchParams.get('techId');
       const techName = parsedUrl.searchParams.get('techName');
-      let reviews = getReviews();
 
+      if (supabase) {
+        try {
+          let query = supabase.from('reviews').select('*').order('created_at', { ascending: false });
+          if (techId) query = query.eq('technician_id', techId);
+          else if (techName) query = query.ilike('technician_name', techName);
+          const { data, error } = await query;
+          if (!error && data && data.length > 0) {
+            res.writeHead(200, {
+              'Content-Type': 'application/json; charset=utf-8',
+              'Cache-Control': 'no-cache'
+            });
+            return res.end(JSON.stringify(data));
+          }
+        } catch (err) {
+          // Fallback to local
+        }
+      }
+
+      let reviews = getReviews();
       if (techId) {
         reviews = reviews.filter(r => String(r.techId) === String(techId));
       } else if (techName) {
@@ -163,7 +255,7 @@ const server = http.createServer((req, res) => {
     if (req.method === 'POST') {
       let body = '';
       req.on('data', chunk => { body += chunk; });
-      req.on('end', () => {
+      req.on('end', async () => {
         try {
           const review = JSON.parse(body);
           if (!review.clientName || !review.rating) {
@@ -179,7 +271,26 @@ const server = http.createServer((req, res) => {
           reviews.unshift(review);
           saveReviews(reviews);
 
-          // Update technician reviews and attendance count if found
+          // Persistir no Supabase
+          if (supabase) {
+            try {
+              await supabase.from('reviews').insert({
+                technician_id: review.techId && !isNaN(Number(review.techId)) ? Number(review.techId) : null,
+                technician_name: review.techName || '',
+                client_name: review.clientName,
+                client_contact: review.clientContact || '',
+                bairro: review.bairro || '',
+                service: review.service || '',
+                rating: review.rating,
+                comment: review.comment || '',
+                verificado: true
+              });
+            } catch (supErr) {
+              console.warn('[Supabase] Falha ao persistir avaliação:', supErr.message);
+            }
+          }
+
+          // Atualizar score do técnico
           const techs = getTechnicians();
           const techIndex = techs.findIndex(t => 
             (review.techId && String(t.id) === String(review.techId)) ||
@@ -188,7 +299,6 @@ const server = http.createServer((req, res) => {
 
           if (techIndex !== -1) {
             techs[techIndex].atendimentos = (Number(techs[techIndex].atendimentos) || 0) + 1;
-            // update score smoothly
             const currentScore = parseFloat(techs[techIndex].avaliacao) || 5.0;
             const newScore = ((currentScore * 4 + review.rating) / 5).toFixed(2);
             techs[techIndex].avaliacao = newScore;
@@ -238,7 +348,8 @@ const server = http.createServer((req, res) => {
         </head>
         <body>
           <h1>404 - Página não encontrada</h1>
-          <a href="/">Voltar para a Página Inicial</a>
+          <p>O arquivo ou rota <code>${pathname}</code> não existe no ArConnect.</p>
+          <a href="/">← Voltar para o início</a>
         </body>
         </html>
       `);
@@ -247,31 +358,21 @@ const server = http.createServer((req, res) => {
     const ext = path.extname(safePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
-    fs.readFile(safePath, (readErr, data) => {
-      if (readErr) {
-        res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
-        return res.end('Erro interno do servidor');
-      }
+    // Caching headers
+    const headers = { 'Content-Type': contentType };
+    if (ext === '.html') {
+      headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+    } else {
+      headers['Cache-Control'] = 'public, max-age=3600';
+    }
 
-      const headers = {
-        'Content-Type': contentType,
-        'Cache-Control': 'no-cache, no-store, must-revalidate'
-      };
-      if (ext === '.html') {
-        headers['Content-Language'] = 'pt-BR';
-      }
-
-      res.writeHead(200, headers);
-      res.end(data);
-    });
+    res.writeHead(200, headers);
+    const stream = fs.createReadStream(safePath);
+    stream.pipe(res);
   });
 });
 
 server.listen(PORT, () => {
-  console.log(`\n==================================================`);
-  console.log(`🚀 ArConnect Marketplace rodando localmente!`);
-  console.log(`📡 URL Principal:        http://localhost:${PORT}`);
-  console.log(`🔍 Encontrar Técnicos:   http://localhost:${PORT}/encontrar-tecnicos`);
-  console.log(`⚙️ Painel Admin:        http://localhost:${PORT}/admin`);
-  console.log(`==================================================\n`);
+  console.log(`[ArConnect] Servidor online em http://localhost:${PORT}`);
+  console.log(`[ArConnect] Supabase URL: ${SUPABASE_URL}`);
 });
