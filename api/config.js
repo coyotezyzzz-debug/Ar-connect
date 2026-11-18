@@ -6,3 +6,4 @@ module.exports = (req, res) => {
     supabaseAnonKey: process.env.SUPABASE_ANON_KEY || 'sb_publishable_4Xhddi-Dvw0SYz7neqbgiQ_ZjbAEajg'
   });
 };
+

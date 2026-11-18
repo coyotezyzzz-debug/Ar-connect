@@ -31,3 +31,4 @@ create policy "Permitir exclusão de técnicos pelo painel"
   for delete
   to anon, authenticated
   using (true);
+

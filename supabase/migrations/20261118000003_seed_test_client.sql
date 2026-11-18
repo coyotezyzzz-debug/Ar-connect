@@ -5,3 +5,4 @@
 insert into public.clients (name, contact, cep, bairro)
 select 'Carlos Augusto (Cliente Teste)', '(92) 99123-4567', '69057-000', 'Adrianópolis'
 where not exists (select 1 from public.clients where contact = '(92) 99123-4567');
+

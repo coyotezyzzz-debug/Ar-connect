@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no" class="notranslate">
+<head>
+  <meta name="google" content="notranslate"/>
+  <meta http-equiv="Content-Language" content="pt-BR"/>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Painel Administrativo - ArConnect</title>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"/>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff8ff',
+              100: '#dbeafe',
+              500: '#0284c7',
+              600: '#006194',
+              700: '#0369a1',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html { scrollbar-gutter: stable; }
+    * { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    .hidden { display: none; }
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important;
+      font-weight: normal;
+      font-style: normal;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+      width: 1em;
+      height: 1em;
+      overflow: hidden;
+      vertical-align: middle;
+      flex-shrink: 0;
+      user-select: none;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+  </style>
+</head>
+<body class="bg-slate-50/70 text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <!-- ADMIN HEADER -->
+  <header class="sticky top-0 z-40 bg-white border-b border-slate-200">
+    <div class="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 h-16 flex items-center justify-between gap-4">
+      
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center group" title="ArConnect">
+          <img src="/arconnect-logo.png" alt="ArConnect" class="h-7 sm:h-8 w-auto object-contain transition-transform group-hover:scale-[1.02]" onerror="this.onerror=null; this.src='arconnect-logo.png';" />
+        </a>
+        <span class="text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md border border-slate-200">
+          Painel Admin
+        </span>
+        <span id="db-status-badge" class="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Supabase Conectado
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="/encontrar-tecnicos" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-brand-600 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors">
+          <span>Ver Plataforma</span>
+          <span translate="no" class="notranslate material-symbols-outlined text-sm">open_in_new</span>
+        </a>
+        <div class="h-5 w-px bg-slate-200"></div>
+        <div class="flex items-center gap-2 text-xs font-semibold text-slate-700">
+          <div class="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[11px]">
+            AD
+          </div>
+          <span class="hidden sm:inline">Administrador</span>
+        </div>
+        <button type="button" onclick="adminLogout()" class="text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2.5 py-1.5 rounded-lg transition-colors font-medium flex items-center gap-1 border border-rose-200" title="Encerrar sessão de admin">
+          <span translate="no" class="notranslate material-symbols-outlined text-sm">logout</span>
+          <span class="hidden sm:inline">Sair</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD CONTENT -->
+  <main class="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-8 w-full flex-1 space-y-6">
+    
+    <!-- STATS OVERVIEW -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-xs font-medium text-slate-500 block">Total de Técnicos</span>
+          <span id="stat-total" class="text-2xl font-extrabold text-slate-900">0</span>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+          <span translate="no" class="notranslate material-symbols-outlined text-xl">engineering</span>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-xs font-medium text-slate-500 block">Disponíveis Hoje</span>
+          <span id="stat-urgentes" class="text-2xl font-extrabold text-emerald-600">0</span>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+          <span translate="no" class="notranslate material-symbols-outlined text-xl">event_available</span>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-xs font-medium text-slate-500 block">Profissionais Verificados</span>
+          <span id="stat-verificados" class="text-2xl font-extrabold text-slate-900">0</span>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+          <span translate="no" class="notranslate material-symbols-outlined text-xl">verified</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTION & SEARCH BAR -->
+    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      
+      <div class="flex-1 flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2">
+        <span translate="no" class="notranslate material-symbols-outlined text-slate-400 text-lg mr-2">search</span>
+        <input type="text" id="admin-search" onkeyup="filterAdminList(this.value)" placeholder="Buscar por nome, especialidade ou bairro..." class="w-full bg-transparent text-xs sm:text-sm text-slate-800 focus:outline-none"/>
+      </div>
+
+      <button type="button" onclick="openNewTechModal()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5 flex-shrink-0 active:scale-95">
+        <span translate="no" class="notranslate material-symbols-outlined text-base">person_add</span>
+        <span>Cadastrar Profissional</span>
+      </button>
+
+    </div>
+
+    <!-- TECHNICIANS TABLE / LIST -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+      <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+        <h2 class="text-sm font-bold text-slate-900">Profissionais Cadastrados</h2>
+        <span id="admin-count" class="text-xs text-slate-500 font-medium">Carregando lista...</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50/70 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+            <tr>
+              <th class="py-3 px-4">Profissional</th>
+              <th class="py-3 px-4">Especialidade / Categorias</th>
+              <th class="py-3 px-4">Região / Bairro</th>
+              <th class="py-3 px-4">WhatsApp</th>
+              <th class="py-3 px-4 text-center">Status</th>
+              <th class="py-3 px-4 text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="technicians-table-body" class="divide-y divide-slate-100 text-slate-700">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CLIENT REVIEWS SECTION IN ADMIN -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+      <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900">Avaliações Enviadas pelos Clientes</h2>
+          <p class="text-[11px] text-slate-500">Relatos e notas cadastrados exclusivamente por clientes atendidos.</p>
+        </div>
+        <span id="reviews-count" class="text-xs text-slate-500 font-medium">Carregando avaliações...</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50/70 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+            <tr>
+              <th class="py-3 px-4">Cliente</th>
+              <th class="py-3 px-4">Profissional Avaliado</th>
+              <th class="py-3 px-4">Serviço / Bairro</th>
+              <th class="py-3 px-4">Nota</th>
+              <th class="py-3 px-4">Comentário</th>
+              <th class="py-3 px-4 text-right">Data</th>
+            </tr>
+          </thead>
+          <tbody id="reviews-table-body" class="divide-y divide-slate-100 text-slate-700">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL DE CADASTRO E EDIÇÃO -->
+  <div id="tech-modal" onclick="if(event.target === this) closeTechModal()" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+    <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto overscroll-contain my-auto" onclick="event.stopPropagation()">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h3 id="modal-title" class="text-base font-bold text-slate-900">Cadastrar Profissional de Ar</h3>
+        <button type="button" onclick="closeTechModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <span translate="no" class="notranslate material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <form id="tech-form" onsubmit="handleSaveTech(event)" class="space-y-4">
+        <input type="hidden" id="tech-id"/>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nome Completo do Profissional *</label>
+          <input type="text" id="tech-nome" placeholder="Ex: Lucas Ferreira" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">WhatsApp para Contato *</label>
+            <input type="tel" id="tech-whatsapp" placeholder="(92) 98888-7777" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">CEP Base</label>
+            <input type="text" id="tech-cep" maxlength="9" placeholder="00000-000" oninput="handleCepInput(this, 'tech-bairro')" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Bairro / Região de Atuação *</label>
+            <input type="text" id="tech-bairro" placeholder="Ex: Adrianópolis (4 km)" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Especialidade Principal *</label>
+          <input type="text" id="tech-especialidade" placeholder="Ex: Especialista Inverter, VRF & Dutos" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Breve Descrição Técnica</label>
+          <textarea id="tech-descricao" rows="2" placeholder="Ex: Formado pelo SENAI com registro CFT ativo. Especialista em aparelhos de grande porte e residenciais." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1.5">Categorias de Atendimento</label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+            <label class="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 p-2 rounded-lg cursor-pointer hover:bg-slate-100">
+              <input type="checkbox" name="cat" value="instalacao" class="w-3.5 h-3.5 rounded text-brand-600 focus:ring-0"/>
+              <span>Instalação</span>
+            </label>
+            <label class="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 p-2 rounded-lg cursor-pointer hover:bg-slate-100">
+              <input type="checkbox" name="cat" value="limpeza" class="w-3.5 h-3.5 rounded text-brand-600 focus:ring-0"/>
+              <span>Higienização</span>
+            </label>
+            <label class="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 p-2 rounded-lg cursor-pointer hover:bg-slate-100">
+              <input type="checkbox" name="cat" value="gas" class="w-3.5 h-3.5 rounded text-brand-600 focus:ring-0"/>
+              <span>Carga de Gás</span>
+            </label>
+            <label class="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 p-2 rounded-lg cursor-pointer hover:bg-slate-100">
+              <input type="checkbox" name="cat" value="manutencao" class="w-3.5 h-3.5 rounded text-brand-600 focus:ring-0"/>
+              <span>Conserto</span>
+            </label>
+            <label class="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 p-2 rounded-lg cursor-pointer hover:bg-slate-100">
+              <input type="checkbox" name="cat" value="pmoc" class="w-3.5 h-3.5 rounded text-brand-600 focus:ring-0"/>
+              <span>PMOC</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- FOTO / AVATAR SELECTION -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Foto de Perfil (URL ou escolha um avatar)</label>
+          <input type="url" id="tech-foto" placeholder="https://..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 mb-2"/>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] text-slate-400">Sugestões rápidas:</span>
+            <button type="button" onclick="selectAvatar('https://lh3.googleusercontent.com/aida-public/AB6AXuCrD9Q71351UvQUcfyiYUt7RNYQ4sdeNkX2ecTKdjK7K2tQtem0yx_zMAwazOunHpBZ8WIL2fqpXYI9uFD1P8zkilTkgZSgXDB5Bs5H7h-rIn8E7oi7HIsLFl3Ple7Cqt4DWXSWHC3ETcvWLU5Gmf7UNWApTJlfxhuQNVrrDDZpkpcosvM2CS6OPfVdKJBDZm7XKFUlnnZelr24uXWJJKfyMjoVsTYb8LkoHZzlr2Q')" class="w-7 h-7 rounded-full overflow-hidden ring-1 ring-slate-200 hover:ring-brand-500">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrD9Q71351UvQUcfyiYUt7RNYQ4sdeNkX2ecTKdjK7K2tQtem0yx_zMAwazOunHpBZ8WIL2fqpXYI9uFD1P8zkilTkgZSgXDB5Bs5H7h-rIn8E7oi7HIsLFl3Ple7Cqt4DWXSWHC3ETcvWLU5Gmf7UNWApTJlfxhuQNVrrDDZpkpcosvM2CS6OPfVdKJBDZm7XKFUlnnZelr24uXWJJKfyMjoVsTYb8LkoHZzlr2Q" class="w-full h-full object-cover"/>
+            </button>
+            <button type="button" onclick="selectAvatar('https://lh3.googleusercontent.com/aida-public/AB6AXuAywRYIJ-eLIPLENtyqI1oN24k31UWahvSYUTf8fNYIDFims1S5g-k_BuNC2ma1aoGqhGPSSg_6FKPhULCGXJ7_I7Ao_wVZw0i57sBW2FTMtUXYs74jPNpZjdy9lTqBXUU3yy4GvtFs3m6zF4TMgl9fqk0wgqzuH302zu-mwispK5pbPbT11wMe4fDbWqujnWkdPGZVgHjTuNiO3uHQIBPnnRtsfjbGwPwe62WzfZc')" class="w-7 h-7 rounded-full overflow-hidden ring-1 ring-slate-200 hover:ring-brand-500">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAywRYIJ-eLIPLENtyqI1oN24k31UWahvSYUTf8fNYIDFims1S5g-k_BuNC2ma1aoGqhGPSSg_6FKPhULCGXJ7_I7Ao_wVZw0i57sBW2FTMtUXYs74jPNpZjdy9lTqBXUU3yy4GvtFs3m6zF4TMgl9fqk0wgqzuH302zu-mwispK5pbPbT11wMe4fDbWqujnWkdPGZVgHjTuNiO3uHQIBPnnRtsfjbGwPwe62WzfZc" class="w-full h-full object-cover"/>
+            </button>
+            <button type="button" onclick="selectAvatar('https://lh3.googleusercontent.com/aida-public/AB6AXuD54ajqz4GCQ6Ta8TxmzC1B68s0dJJypUDKCKZJkiHVTXXUUZsskc0HHJzjM1Yg9MsWEkF1JnMVWoddEzmGXKsbzfLTEJKjR4bEkrLBadWAxRvNUcBLmC9RvctPBlUKRtVzJdPDln5Kj8PA2whBmqhjMj4k3vX3t6t3yFQmKxgXgBdt0A-N5X0P6hVfM6e_ySh_0NTpzLMmsMJp7FqF-OL-XzXb0tHtj1xpcypH3_M')" class="w-7 h-7 rounded-full overflow-hidden ring-1 ring-slate-200 hover:ring-brand-500">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD54ajqz4GCQ6Ta8TxmzC1B68s0dJJypUDKCKZJkiHVTXXUUZsskc0HHJzjM1Yg9MsWEkF1JnMVWoddEzmGXKsbzfLTEJKjR4bEkrLBadWAxRvNUcBLmC9RvctPBlUKRtVzJdPDln5Kj8PA2whBmqhjMj4k3vX3t6t3yFQmKxgXgBdt0A-N5X0P6hVfM6e_ySh_0NTpzLMmsMJp7FqF-OL-XzXb0tHtj1xpcypH3_M" class="w-full h-full object-cover"/>
+            </button>
+            <button type="button" onclick="selectAvatar('https://lh3.googleusercontent.com/aida-public/AB6AXuCv3nwZS9O4_26c4zAEGYq9kx0GuZYVEKbGA9ivelo7hTLBUV37PZfrA6V8lh1KTRAI_Q2ykZK10TLqX2VXC8Yke1k13TGw2jlCJdjbDFf6AX8NYpaEhOA1fZtmP92kRJDU5fN6VG1TYTj8MklFt8cyFulLL65UkAVBD4Zcvm7vQhutE970OuEWl7zw4F1TUP-y-3vDyf5NDb8cXVVzSAWNXziBgmysjCS_luD3ST4')" class="w-7 h-7 rounded-full overflow-hidden ring-1 ring-slate-200 hover:ring-brand-500">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCv3nwZS9O4_26c4zAEGYq9kx0GuZYVEKbGA9ivelo7hTLBUV37PZfrA6V8lh1KTRAI_Q2ykZK10TLqX2VXC8Yke1k13TGw2jlCJdjbDFf6AX8NYpaEhOA1fZtmP92kRJDU5fN6VG1TYTj8MklFt8cyFulLL65UkAVBD4Zcvm7vQhutE970OuEWl7zw4F1TUP-y-3vDyf5NDb8cXVVzSAWNXziBgmysjCS_luD3ST4" class="w-full h-full object-cover"/>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
+          <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+            <input type="checkbox" id="tech-verificado" checked class="w-4 h-4 rounded text-brand-600 focus:ring-0"/>
+            <span>Selo de Verificado</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+            <input type="checkbox" id="tech-urgente" checked class="w-4 h-4 rounded text-brand-600 focus:ring-0"/>
+            <span>Disponível com Agenda Hoje</span>
+          </label>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="closeTechModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">
+            Cancelar
+          </button>
+          <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm transition-all active:scale-95 flex items-center gap-1.5">
+            <span translate="no" class="notranslate material-symbols-outlined text-sm">save</span>
+            <span>Salvar Profissional</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="admin-toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-lg border border-slate-800 flex items-center gap-2">
+    <span translate="no" class="notranslate material-symbols-outlined text-emerald-400 text-base">check_circle</span>
+    <span id="toast-msg">Operação realizada com sucesso!</span>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://cyoimmsnsndqtouezgpg.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_4Xhddi-Dvw0SYz7neqbgiQ_ZjbAEajg';
+    let supabaseClient = null;
+
+    try {
+      if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (e) {
+      console.warn('Supabase JS não inicializado:', e);
+    }
+
+    let technicians = [];
+
+    async function loadTechnicians() {
+      // 1. Tentar carregar direto do Supabase
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('technicians')
+            .select('*')
+            .order('avaliacao', { ascending: false });
+          if (!error && data && data.length > 0) {
+            technicians = data;
+            renderTechniciansTable(technicians);
+            updateStats(technicians);
+            return;
+          }
+        } catch (e) {
+          console.warn('Supabase direto falhou, tentando rota API...', e);
+        }
+      }
+
+      // 2. Tentar API Serverless / Node
+      try {
+        const res = await fetch('/api/technicians');
+        if (res.ok) {
+          technicians = await res.json();
+          renderTechniciansTable(technicians);
+          updateStats(technicians);
+          return;
+        }
+      } catch (e) {
+        console.warn('API offline, usando fallback local.');
+      }
+      
+      // 3. Fallback se estiver offline ou local
+      const local = localStorage.getItem('arconnect_technicians') || localStorage.getItem('climapro_technicians');
+      if (local) {
+        technicians = JSON.parse(local);
+      }
+      renderTechniciansTable(technicians);
+      updateStats(technicians);
+    }
+
+    function updateStats(list) {
+      document.getElementById('stat-total').innerText = list.length;
+      document.getElementById('stat-urgentes').innerText = list.filter(t => t.urgente).length;
+      document.getElementById('stat-verificados').innerText = list.filter(t => t.verificado).length;
+      document.getElementById('admin-count').innerText = `${list.length} profissionais listados`;
+    }
+
+    function renderTechniciansTable(list) {
+      const tbody = document.getElementById('technicians-table-body');
+      tbody.innerHTML = '';
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-8 text-center text-slate-400">
+              Nenhum profissional cadastrado. Clique em "+ Cadastrar Profissional" acima.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      list.forEach(tech => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/70 transition-colors';
+
+        const cats = (tech.categorias || []).map(c => {
+          const map = { instalacao: 'Instalação', limpeza: 'Higienização', gas: 'Gás', manutencao: 'Conserto', pmoc: 'PMOC' };
+          return `<span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-medium mr-1">${map[c] || c}</span>`;
+        }).join('');
+
+        tr.innerHTML = `
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-3">
+              <img src="${tech.foto || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCrD9Q71351UvQUcfyiYUt7RNYQ4sdeNkX2ecTKdjK7K2tQtem0yx_zMAwazOunHpBZ8WIL2fqpXYI9uFD1P8zkilTkgZSgXDB5Bs5H7h-rIn8E7oi7HIsLFl3Ple7Cqt4DWXSWHC3ETcvWLU5Gmf7UNWApTJlfxhuQNVrrDDZpkpcosvM2CS6OPfVdKJBDZm7XKFUlnnZelr24uXWJJKfyMjoVsTYb8LkoHZzlr2Q'}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-slate-100"/>
+              <div>
+                <span class="font-bold text-slate-900 block leading-tight">${tech.nome}</span>
+                <span class="text-[11px] text-slate-400">★ ${tech.avaliacao || '5.0'} (${tech.atendimentos || 1} atendimentos)</span>
+              </div>
+            </div>
+          </td>
+          <td class="py-3 px-4">
+            <span class="font-medium text-slate-800 block mb-1">${tech.especialidade}</span>
+            <div class="flex flex-wrap gap-1">${cats}</div>
+          </td>
+          <td class="py-3 px-4 font-medium text-slate-600">
+            <span>${tech.bairro}</span>
+            ${tech.cep ? `<span class="block text-[10px] text-slate-400 font-mono">CEP: ${tech.cep}</span>` : ''}
+          </td>
+          <td class="py-3 px-4 font-mono font-medium text-slate-700">${tech.whatsapp}</td>
+          <td class="py-3 px-4 text-center">
+            ${tech.verificado ? '<span class="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full"><span translate="no" class="notranslate material-symbols-outlined text-xs">check</span> Verificado</span>' : '<span class="text-[10px] text-slate-400">Pendente</span>'}
+            ${tech.urgente ? '<span class="inline-flex items-center gap-0.5 text-[10px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full ml-1">Hoje</span>' : ''}
+          </td>
+          <td class="py-3 px-4 text-right">
+            <div class="flex items-center justify-end gap-1.5">
+              <button type="button" onclick="editTech('${tech.id}')" class="p-1.5 text-slate-500 hover:text-brand-600 hover:bg-slate-100 rounded-lg transition-colors" title="Editar">
+                <span translate="no" class="notranslate material-symbols-outlined text-base">edit</span>
+              </button>
+              <button type="button" onclick="deleteTech('${tech.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Excluir">
+                <span translate="no" class="notranslate material-symbols-outlined text-base">delete</span>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function handleCepInput(inputElem, targetBairroId) {
+      if (!inputElem) return;
+      let val = inputElem.value.replace(/\D/g, '');
+      if (val.length > 8) val = val.slice(0, 8);
+      if (val.length > 5) {
+        inputElem.value = val.slice(0, 5) + '-' + val.slice(5);
+      } else {
+        inputElem.value = val;
+      }
+
+      if (val.length === 8) {
+        const bairroField = document.getElementById(targetBairroId);
+        try {
+          const res = await fetch(`https://viacep.com.br/ws/${val}/json/`);
+          if (res.ok) {
+            const data = await res.json();
+            if (!data.erro && bairroField) {
+              const loc = data.bairro ? (data.bairro + (data.localidade && data.localidade !== 'Manaus' ? ` (${data.localidade})` : '')) : (data.localidade || '');
+              if (loc) {
+                bairroField.value = loc;
+                bairroField.classList.add('ring-2', 'ring-emerald-400', 'bg-emerald-50');
+                setTimeout(() => {
+                  bairroField.classList.remove('ring-2', 'ring-emerald-400', 'bg-emerald-50');
+                }, 1200);
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('ViaCEP offline:', err);
+        }
+      }
+    }
+
+    function filterAdminList(query) {
+      const q = query.toLowerCase();
+      const filtered = technicians.filter(t => 
+        t.nome.toLowerCase().includes(q) || 
+        t.especialidade.toLowerCase().includes(q) || 
+        t.bairro.toLowerCase().includes(q)
+      );
+      renderTechniciansTable(filtered);
+    }
+
+    function selectAvatar(url) {
+      document.getElementById('tech-foto').value = url;
+    }
+
+    function openNewTechModal() {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+
+      document.getElementById('modal-title').innerText = 'Cadastrar Novo Profissional';
+      document.getElementById('tech-id').value = '';
+      document.getElementById('tech-nome').value = '';
+      document.getElementById('tech-whatsapp').value = '';
+      document.getElementById('tech-cep').value = '';
+      document.getElementById('tech-bairro').value = '';
+      document.getElementById('tech-especialidade').value = '';
+      document.getElementById('tech-descricao').value = '';
+      document.getElementById('tech-foto').value = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCrD9Q71351UvQUcfyiYUt7RNYQ4sdeNkX2ecTKdjK7K2tQtem0yx_zMAwazOunHpBZ8WIL2fqpXYI9uFD1P8zkilTkgZSgXDB5Bs5H7h-rIn8E7oi7HIsLFl3Ple7Cqt4DWXSWHC3ETcvWLU5Gmf7UNWApTJlfxhuQNVrrDDZpkpcosvM2CS6OPfVdKJBDZm7XKFUlnnZelr24uXWJJKfyMjoVsTYb8LkoHZzlr2Q';
+      document.querySelectorAll('input[name="cat"]').forEach(c => c.checked = false);
+      document.getElementById('tech-verificado').checked = true;
+      document.getElementById('tech-urgente').checked = true;
+
+      document.getElementById('tech-modal').classList.remove('hidden');
+      document.getElementById('tech-modal').classList.add('flex');
+    }
+
+    function closeTechModal() {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+
+      document.getElementById('tech-modal').classList.add('hidden');
+      document.getElementById('tech-modal').classList.remove('flex');
+    }
+
+    function editTech(id) {
+      const tech = technicians.find(t => String(t.id) === String(id));
+      if (!tech) return;
+
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+
+      document.getElementById('modal-title').innerText = 'Editar Profissional';
+      document.getElementById('tech-id').value = tech.id;
+      document.getElementById('tech-nome').value = tech.nome;
+      document.getElementById('tech-whatsapp').value = tech.whatsapp;
+      document.getElementById('tech-cep').value = tech.cep || '';
+      document.getElementById('tech-bairro').value = tech.bairro;
+      document.getElementById('tech-especialidade').value = tech.especialidade;
+      document.getElementById('tech-descricao').value = tech.descricao || '';
+      document.getElementById('tech-foto').value = tech.foto || '';
+      
+      const cats = tech.categorias || [];
+      document.querySelectorAll('input[name="cat"]').forEach(c => {
+        c.checked = cats.includes(c.value);
+      });
+
+      document.getElementById('tech-verificado').checked = !!tech.verificado;
+      document.getElementById('tech-urgente').checked = !!tech.urgente;
+
+      document.getElementById('tech-modal').classList.remove('hidden');
+      document.getElementById('tech-modal').classList.add('flex');
+    }
+
+    async function handleSaveTech(e) {
+      e.preventDefault();
+
+      const cats = Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(c => c.value);
+      const techId = document.getElementById('tech-id').value;
+      const techData = {
+        nome: document.getElementById('tech-nome').value.trim(),
+        whatsapp: document.getElementById('tech-whatsapp').value.trim(),
+        cep: document.getElementById('tech-cep').value.trim(),
+        bairro: document.getElementById('tech-bairro').value.trim() || 'Manaus',
+        cidade: 'Manaus',
+        estado: 'AM',
+        especialidade: document.getElementById('tech-especialidade').value.trim(),
+        descricao: document.getElementById('tech-descricao').value.trim(),
+        foto: document.getElementById('tech-foto').value.trim() || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCrD9Q71351UvQUcfyiYUt7RNYQ4sdeNkX2ecTKdjK7K2tQtem0yx_zMAwazOunHpBZ8WIL2fqpXYI9uFD1P8zkilTkgZSgXDB5Bs5H7h-rIn8E7oi7HIsLFl3Ple7Cqt4DWXSWHC3ETcvWLU5Gmf7UNWApTJlfxhuQNVrrDDZpkpcosvM2CS6OPfVdKJBDZm7XKFUlnnZelr24uXWJJKfyMjoVsTYb8LkoHZzlr2Q',
+        categorias: cats,
+        verificado: document.getElementById('tech-verificado').checked,
+        urgente: document.getElementById('tech-urgente').checked,
+        avaliacao: 5.0,
+        atendimentos: 1
+      };
+
+      let savedSuccessfully = false;
+
+      // 1. Tentar salvar diretamente no Supabase (seja local ou no Vercel)
+      if (supabaseClient) {
+        try {
+          if (techId && !isNaN(Number(techId))) {
+            const { error } = await supabaseClient
+              .from('technicians')
+              .update(techData)
+              .eq('id', Number(techId));
+            if (!error) savedSuccessfully = true;
+          } else {
+            const { error } = await supabaseClient
+              .from('technicians')
+              .insert(techData);
+            if (!error) savedSuccessfully = true;
+          }
+        } catch (err) {
+          console.warn('Erro ao salvar direto no Supabase:', err);
+        }
+      }
+
+      // 2. Tentar salvar via rota de API (/api/technicians)
+      if (!savedSuccessfully) {
+        try {
+          const res = await fetch('/api/technicians', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...techData, id: techId || null })
+          });
+          if (res.ok) savedSuccessfully = true;
+        } catch (err) {
+          console.warn('Erro ao salvar via API:', err);
+        }
+      }
+
+      if (savedSuccessfully) {
+        showToast('Profissional salvo no banco de dados!');
+        closeTechModal();
+        await loadTechnicians();
+        return;
+      }
+
+      // 3. Fallback Local storage
+      if (techId) {
+        const idx = technicians.findIndex(t => String(t.id) === String(techId));
+        if (idx !== -1) technicians[idx] = { ...technicians[idx], ...techData, id: techId };
+      } else {
+        techData.id = Date.now().toString();
+        technicians.unshift(techData);
+      }
+      localStorage.setItem('arconnect_technicians', JSON.stringify(technicians));
+      showToast('Profissional salvo localmente!');
+      closeTechModal();
+      renderTechniciansTable(technicians);
+      updateStats(technicians);
+    }
+
+    async function deleteTech(id) {
+      if (!confirm('Deseja realmente remover este profissional do sistema?')) return;
+
+      let deleted = false;
+
+      // 1. Tentar excluir direto no Supabase
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('technicians')
+            .delete()
+            .eq('id', Number(id));
+          if (!error) deleted = true;
+        } catch (e) {
+          console.warn('Erro ao deletar no Supabase:', e);
+        }
+      }
+
+      // 2. Tentar via API
+      if (!deleted) {
+        try {
+          const res = await fetch(`/api/technicians?id=${id}`, { method: 'DELETE' });
+          if (res.ok) deleted = true;
+        } catch (e) {
+          console.warn('Erro ao deletar via API');
+        }
+      }
+
+      showToast('Profissional removido!');
+      technicians = technicians.filter(t => String(t.id) !== String(id));
+      localStorage.setItem('arconnect_technicians', JSON.stringify(technicians));
+      await loadTechnicians();
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('admin-toast');
+      document.getElementById('toast-msg').innerText = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 3500);
+    }
+
+    async function loadAdminReviews() {
+      // 1. Supabase direto
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('reviews')
+            .select('*')
+            .order('created_at', { ascending: false });
+          if (!error && data) {
+            const formatted = data.map(r => ({
+              id: r.id,
+              techId: r.technician_id,
+              techName: r.technician_name,
+              clientName: r.client_name,
+              clientContact: r.client_contact,
+              bairro: r.bairro,
+              service: r.service,
+              rating: r.rating,
+              comment: r.comment,
+              verificado: r.verificado,
+              data: new Date(r.created_at).toLocaleDateString('pt-BR')
+            }));
+            renderReviewsTable(formatted);
+            return;
+          }
+        } catch (e) {
+          console.warn('Supabase avaliações erro:', e);
+        }
+      }
+
+      // 2. API fallback
+      try {
+        const res = await fetch('/api/reviews');
+        if (res.ok) {
+          const list = await res.json();
+          renderReviewsTable(list);
+        }
+      } catch (e) {
+        console.warn('Erro ao carregar avaliações no admin');
+      }
+    }
+
+    function renderReviewsTable(list) {
+      const tbody = document.getElementById('reviews-table-body');
+      const counter = document.getElementById('reviews-count');
+      if (counter) counter.innerText = `${list.length} avaliações registradas`;
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      if (!list || list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">Nenhuma avaliação enviada ainda.</td></tr>`;
+        return;
+      }
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/70 transition-colors';
+        tr.innerHTML = `
+          <td class="py-3 px-4">
+            <span class="font-bold text-slate-900 block">${r.clientName}</span>
+            <span class="text-[10px] text-slate-400">${r.clientContact || 'WhatsApp'}</span>
+          </td>
+          <td class="py-3 px-4 font-semibold text-brand-700">${r.techName || '-'}</td>
+          <td class="py-3 px-4 text-slate-600">${r.service || 'Serviço'} • ${r.bairro || 'SP'}</td>
+          <td class="py-3 px-4">
+            <span class="font-bold text-amber-500">★ ${r.rating}.0</span>
+          </td>
+          <td class="py-3 px-4 text-slate-600 max-w-xs truncate" title="${r.comment || ''}">${r.comment || ''}</td>
+          <td class="py-3 px-4 text-right text-slate-400 font-mono text-[11px]">${r.data || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+  <!-- ADMIN LOGIN GATE MODAL -->
+  <div id="admin-login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+    <div class="bg-white w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mx-auto mb-3 shadow-inner">
+          <span translate="no" class="notranslate material-symbols-outlined text-2xl">admin_panel_settings</span>
+        </div>
+        <h2 class="text-xl font-bold text-slate-900">Acesso Administrativo</h2>
+        <p class="text-xs text-slate-500 mt-1">Homologação e Gestão de Técnicos ArConnect Manaus</p>
+      </div>
+
+      <div id="admin-login-error" class="hidden mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-medium text-center">
+        E-mail ou senha incorretos. Verifique suas credenciais.
+      </div>
+
+      <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">E-mail do Administrador</label>
+          <input type="email" id="admin-input-email" required placeholder="admin@arconnect.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Senha de Acesso</label>
+          <input type="password" id="admin-input-pass" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+        </div>
+
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-3 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-1.5">
+          <span translate="no" class="notranslate material-symbols-outlined text-sm">lock_open</span>
+          <span>Acessar Painel</span>
+        </button>
+      </form>
+
+      <!-- TEST PROFILE SHORTCUT -->
+      <div class="mt-5 pt-4 border-t border-slate-100">
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <span class="text-[11px] font-bold text-slate-700 block mb-1">Credenciais do Perfil Admin:</span>
+          <p class="text-[11px] text-slate-500 font-mono">E-mail: <strong class="text-slate-800">admin@arconnect.com</strong></p>
+          <p class="text-[11px] text-slate-500 font-mono">Senha: <strong class="text-slate-800">admin2026</strong></p>
+          <button type="button" onclick="fillAdminTestCredentials()" class="mt-2 w-full bg-slate-200 hover:bg-slate-300 text-slate-800 text-[11px] font-semibold py-1.5 rounded-lg transition-colors">
+            ⚡ Preencher Acesso de Teste
+          </button>
+        </div>
+        <div class="text-center mt-3">
+          <a href="/" class="text-xs text-slate-400 hover:text-slate-600 transition-colors">← Voltar para a Plataforma</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_EMAIL = 'admin@arconnect.com';
+    const ADMIN_PASS = 'admin2026';
+
+    function checkAdminAuth() {
+      const isAuth = sessionStorage.getItem('arconnect_admin_auth') === 'true';
+      const modal = document.getElementById('admin-login-modal');
+      if (!isAuth) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('admin-input-email').value.trim();
+      const pass = document.getElementById('admin-input-pass').value.trim();
+      const errorMsg = document.getElementById('admin-login-error');
+
+      if (email.toLowerCase() === ADMIN_EMAIL && pass === ADMIN_PASS) {
+        sessionStorage.setItem('arconnect_admin_auth', 'true');
+        checkAdminAuth();
+        showToast('Login de administrador realizado com sucesso!');
+      } else {
+        errorMsg.classList.remove('hidden');
+        setTimeout(() => errorMsg.classList.add('hidden'), 4000);
+      }
+    }
+
+    function fillAdminTestCredentials() {
+      document.getElementById('admin-input-email').value = ADMIN_EMAIL;
+      document.getElementById('admin-input-pass').value = ADMIN_PASS;
+    }
+
+    function adminLogout() {
+      if (confirm('Deseja sair do Painel Administrativo?')) {
+        sessionStorage.removeItem('arconnect_admin_auth');
+        window.location.href = '/';
+      }
+    }
+  </script>
+
+  <script>
+    // Initial load
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAdminAuth();
+      loadTechnicians();
+      loadAdminReviews();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeTechModal();
+    });
+  </script>
+</body>
+</html>
+
