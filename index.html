@@ -14,6 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"/>
   
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -1084,6 +1085,27 @@
         rating,
         comment
       };
+
+      const SUPABASE_URL = 'https://cyoimmsnsndqtouezgpg.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_4Xhddi-Dvw0SYz7neqbgiQ_ZjbAEajg';
+      if (window.supabase) {
+        try {
+          const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          await client.from('reviews').insert({
+            technician_id: techId && !isNaN(Number(techId)) ? Number(techId) : null,
+            technician_name: techName || 'Técnico Especialista',
+            client_name: client.name || 'Cliente ArConnect',
+            client_contact: client.contact || '',
+            bairro: client.bairro || 'Manaus',
+            service: service || 'Higienização & Manutenção',
+            rating: rating,
+            comment: comment,
+            verificado: true
+          });
+        } catch (supErr) {
+          console.warn('Erro ao salvar review direto no Supabase:', supErr);
+        }
+      }
 
       try {
         await fetch('/api/reviews', {

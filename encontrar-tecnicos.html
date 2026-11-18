@@ -18,6 +18,7 @@
     rel="stylesheet" />
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -1097,6 +1098,24 @@
         comment
       };
 
+      if (supabaseClient) {
+        try {
+          await supabaseClient.from('reviews').insert({
+            technician_id: techId && !isNaN(Number(techId)) ? Number(techId) : null,
+            technician_name: techName || 'Técnico Especialista',
+            client_name: client.name || 'Cliente ArConnect',
+            client_contact: client.contact || '',
+            bairro: client.bairro || 'Manaus',
+            service: service || 'Higienização & Manutenção',
+            rating: rating,
+            comment: comment,
+            verificado: true
+          });
+        } catch (err) {
+          console.warn('Erro ao salvar review via Supabase direto:', err);
+        }
+      }
+
       try {
         await fetch('/api/reviews', {
           method: 'POST',
@@ -1273,7 +1292,36 @@ Podemos confirmar este atendimento?`;
       cards.forEach(c => container.appendChild(c));
     }
 
+    const SUPABASE_URL = 'https://cyoimmsnsndqtouezgpg.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_4Xhddi-Dvw0SYz7neqbgiQ_ZjbAEajg';
+    let supabaseClient = null;
+
+    try {
+      if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (e) {
+      console.warn('Supabase JS não inicializado:', e);
+    }
+
     async function loadDynamicTechnicians() {
+      // 1. Tentar direto do Supabase
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('technicians')
+            .select('*')
+            .order('avaliacao', { ascending: false });
+          if (!error && data && data.length > 0) {
+            renderDynamicCards(data);
+            return;
+          }
+        } catch (e) {
+          console.warn('Supabase direto falhou, tentando API:', e);
+        }
+      }
+
+      // 2. Tentar API Serverless / Node
       try {
         const res = await fetch('/api/technicians');
         if (res.ok) {

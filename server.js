@@ -161,20 +161,28 @@ const server = http.createServer(async (req, res) => {
           // Salvar também no Supabase se disponível
           if (supabase) {
             try {
-              await supabase.from('technicians').upsert({
+              const payload = {
                 nome: tech.nome,
                 especialidade: tech.especialidade,
                 descricao: tech.descricao || '',
                 categorias: tech.categorias || [],
                 cep: tech.cep || '',
                 bairro: tech.bairro || 'Manaus',
+                cidade: 'Manaus',
+                estado: 'AM',
                 whatsapp: tech.whatsapp,
                 foto: tech.foto || '',
                 avaliacao: parseFloat(tech.avaliacao) || 5.0,
                 atendimentos: parseInt(tech.atendimentos) || 0,
                 urgente: !!tech.urgente,
                 verificado: tech.verificado !== false
-              });
+              };
+              if (tech.id && !isNaN(Number(tech.id))) {
+                await supabase.from('technicians').update(payload).eq('id', Number(tech.id));
+              } else {
+                const { data } = await supabase.from('technicians').insert(payload).select();
+                if (data && data[0]) tech.id = data[0].id;
+              }
             } catch (supErr) {
               console.warn('[Supabase] Falha ao persistir técnico:', supErr.message);
             }

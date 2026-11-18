@@ -14,6 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"/>
   
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -75,6 +76,10 @@
         </a>
         <span class="text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md border border-slate-200">
           Painel Admin
+        </span>
+        <span id="db-status-badge" class="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Supabase Conectado
         </span>
       </div>
 
@@ -325,9 +330,40 @@
   </div>
 
   <script>
+    const SUPABASE_URL = 'https://cyoimmsnsndqtouezgpg.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_4Xhddi-Dvw0SYz7neqbgiQ_ZjbAEajg';
+    let supabaseClient = null;
+
+    try {
+      if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (e) {
+      console.warn('Supabase JS não inicializado:', e);
+    }
+
     let technicians = [];
 
     async function loadTechnicians() {
+      // 1. Tentar carregar direto do Supabase
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('technicians')
+            .select('*')
+            .order('avaliacao', { ascending: false });
+          if (!error && data && data.length > 0) {
+            technicians = data;
+            renderTechniciansTable(technicians);
+            updateStats(technicians);
+            return;
+          }
+        } catch (e) {
+          console.warn('Supabase direto falhou, tentando rota API...', e);
+        }
+      }
+
+      // 2. Tentar API Serverless / Node
       try {
         const res = await fetch('/api/technicians');
         if (res.ok) {
@@ -340,7 +376,7 @@
         console.warn('API offline, usando fallback local.');
       }
       
-      // Fallback if file protocol
+      // 3. Fallback se estiver offline ou local
       const local = localStorage.getItem('arconnect_technicians') || localStorage.getItem('climapro_technicians');
       if (local) {
         technicians = JSON.parse(local);
@@ -527,44 +563,73 @@
       e.preventDefault();
 
       const cats = Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(c => c.value);
+      const techId = document.getElementById('tech-id').value;
       const techData = {
-        id: document.getElementById('tech-id').value || null,
-        nome: document.getElementById('tech-nome').value,
-        whatsapp: document.getElementById('tech-whatsapp').value,
+        nome: document.getElementById('tech-nome').value.trim(),
+        whatsapp: document.getElementById('tech-whatsapp').value.trim(),
         cep: document.getElementById('tech-cep').value.trim(),
-        bairro: document.getElementById('tech-bairro').value,
-        especialidade: document.getElementById('tech-especialidade').value,
-        descricao: document.getElementById('tech-descricao').value,
-        foto: document.getElementById('tech-foto').value,
+        bairro: document.getElementById('tech-bairro').value.trim() || 'Manaus',
+        cidade: 'Manaus',
+        estado: 'AM',
+        especialidade: document.getElementById('tech-especialidade').value.trim(),
+        descricao: document.getElementById('tech-descricao').value.trim(),
+        foto: document.getElementById('tech-foto').value.trim() || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCrD9Q71351UvQUcfyiYUt7RNYQ4sdeNkX2ecTKdjK7K2tQtem0yx_zMAwazOunHpBZ8WIL2fqpXYI9uFD1P8zkilTkgZSgXDB5Bs5H7h-rIn8E7oi7HIsLFl3Ple7Cqt4DWXSWHC3ETcvWLU5Gmf7UNWApTJlfxhuQNVrrDDZpkpcosvM2CS6OPfVdKJBDZm7XKFUlnnZelr24uXWJJKfyMjoVsTYb8LkoHZzlr2Q',
         categorias: cats,
         verificado: document.getElementById('tech-verificado').checked,
-        urgente: document.getElementById('tech-urgente').checked
+        urgente: document.getElementById('tech-urgente').checked,
+        avaliacao: 5.0,
+        atendimentos: 1
       };
 
-      try {
-        const res = await fetch('/api/technicians', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(techData)
-        });
-        if (res.ok) {
-          showToast('Profissional salvo com sucesso!');
-          closeTechModal();
-          await loadTechnicians();
-          return;
+      let savedSuccessfully = false;
+
+      // 1. Tentar salvar diretamente no Supabase (seja local ou no Vercel)
+      if (supabaseClient) {
+        try {
+          if (techId && !isNaN(Number(techId))) {
+            const { error } = await supabaseClient
+              .from('technicians')
+              .update(techData)
+              .eq('id', Number(techId));
+            if (!error) savedSuccessfully = true;
+          } else {
+            const { error } = await supabaseClient
+              .from('technicians')
+              .insert(techData);
+            if (!error) savedSuccessfully = true;
+          }
+        } catch (err) {
+          console.warn('Erro ao salvar direto no Supabase:', err);
         }
-      } catch (err) {
-        console.warn('Erro ao salvar via API');
       }
 
-      // Local storage fallback
-      if (techData.id) {
-        const idx = technicians.findIndex(t => String(t.id) === String(techData.id));
-        if (idx !== -1) technicians[idx] = { ...technicians[idx], ...techData };
+      // 2. Tentar salvar via rota de API (/api/technicians)
+      if (!savedSuccessfully) {
+        try {
+          const res = await fetch('/api/technicians', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...techData, id: techId || null })
+          });
+          if (res.ok) savedSuccessfully = true;
+        } catch (err) {
+          console.warn('Erro ao salvar via API:', err);
+        }
+      }
+
+      if (savedSuccessfully) {
+        showToast('Profissional salvo no banco de dados!');
+        closeTechModal();
+        await loadTechnicians();
+        return;
+      }
+
+      // 3. Fallback Local storage
+      if (techId) {
+        const idx = technicians.findIndex(t => String(t.id) === String(techId));
+        if (idx !== -1) technicians[idx] = { ...technicians[idx], ...techData, id: techId };
       } else {
         techData.id = Date.now().toString();
-        techData.avaliacao = "5.0";
-        techData.atendimentos = 1;
         technicians.unshift(techData);
       }
       localStorage.setItem('arconnect_technicians', JSON.stringify(technicians));
@@ -577,22 +642,35 @@
     async function deleteTech(id) {
       if (!confirm('Deseja realmente remover este profissional do sistema?')) return;
 
-      try {
-        const res = await fetch(`/api/technicians?id=${id}`, { method: 'DELETE' });
-        if (res.ok) {
-          showToast('Profissional removido com sucesso!');
-          await loadTechnicians();
-          return;
+      let deleted = false;
+
+      // 1. Tentar excluir direto no Supabase
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('technicians')
+            .delete()
+            .eq('id', Number(id));
+          if (!error) deleted = true;
+        } catch (e) {
+          console.warn('Erro ao deletar no Supabase:', e);
         }
-      } catch (e) {
-        console.warn('Erro ao deletar via API');
       }
 
+      // 2. Tentar via API
+      if (!deleted) {
+        try {
+          const res = await fetch(`/api/technicians?id=${id}`, { method: 'DELETE' });
+          if (res.ok) deleted = true;
+        } catch (e) {
+          console.warn('Erro ao deletar via API');
+        }
+      }
+
+      showToast('Profissional removido!');
       technicians = technicians.filter(t => String(t.id) !== String(id));
       localStorage.setItem('arconnect_technicians', JSON.stringify(technicians));
-      showToast('Profissional removido!');
-      renderTechniciansTable(technicians);
-      updateStats(technicians);
+      await loadTechnicians();
     }
 
     function showToast(msg) {
@@ -603,6 +681,36 @@
     }
 
     async function loadAdminReviews() {
+      // 1. Supabase direto
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('reviews')
+            .select('*')
+            .order('created_at', { ascending: false });
+          if (!error && data) {
+            const formatted = data.map(r => ({
+              id: r.id,
+              techId: r.technician_id,
+              techName: r.technician_name,
+              clientName: r.client_name,
+              clientContact: r.client_contact,
+              bairro: r.bairro,
+              service: r.service,
+              rating: r.rating,
+              comment: r.comment,
+              verificado: r.verificado,
+              data: new Date(r.created_at).toLocaleDateString('pt-BR')
+            }));
+            renderReviewsTable(formatted);
+            return;
+          }
+        } catch (e) {
+          console.warn('Supabase avaliações erro:', e);
+        }
+      }
+
+      // 2. API fallback
       try {
         const res = await fetch('/api/reviews');
         if (res.ok) {
