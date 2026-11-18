@@ -333,13 +333,21 @@ const server = http.createServer(async (req, res) => {
     pathname = '/admin.html';
   }
 
-  // Safe path validation
-  const safePath = path.normalize(path.join(BASE_DIR, pathname));
-  if (!safePath.startsWith(BASE_DIR)) {
+  // Safe path validation (check root and public/)
+  let targetPath = path.normalize(path.join(BASE_DIR, pathname));
+  if (!fs.existsSync(targetPath) || !fs.statSync(targetPath).isFile()) {
+    const publicPath = path.normalize(path.join(BASE_DIR, 'public', pathname));
+    if (fs.existsSync(publicPath) && fs.statSync(publicPath).isFile()) {
+      targetPath = publicPath;
+    }
+  }
+
+  if (!targetPath.startsWith(BASE_DIR)) {
     res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
     return res.end('Acesso negado');
   }
 
+  const safePath = targetPath;
   fs.stat(safePath, (err, stats) => {
     if (err || !stats.isFile()) {
       res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });

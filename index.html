@@ -84,10 +84,10 @@
       
       <!-- Logo (ArConnect Oficial) -->
       <a href="/" class="flex items-center group flex-shrink-0" title="ArConnect">
-        <img src="/arconnect-logo.png" alt="ArConnect" class="h-6 sm:h-8 max-w-[115px] sm:max-w-none w-auto object-contain transition-transform group-hover:scale-[1.02]" style="height: 24px; max-height: 32px; width: auto;" />
+        <img src="/arconnect-logo.png" alt="ArConnect" class="h-6 sm:h-8 max-w-[115px] sm:max-w-none w-auto object-contain transition-transform group-hover:scale-[1.02]" style="height: 24px; max-height: 32px; width: auto;" onerror="this.onerror=null; this.src='arconnect-logo.png';" />
       </a>
 
-      <!-- Desktop Navigation -->
+      <!-- Desktop Navigation (Admin oculto para clientes) -->
       <nav class="hidden md:flex items-center gap-1">
         <a href="/" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-brand-600 bg-brand-50 transition-colors">
           Início
@@ -101,15 +101,11 @@
         <a href="#faq" class="px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
           Dúvidas
         </a>
-        <a href="/admin" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 hover:text-brand-600 hover:bg-slate-50 transition-colors flex items-center gap-1">
-          <span translate="no" class="notranslate material-symbols-outlined text-sm text-brand-600">admin_panel_settings</span>
-          <span>Admin</span>
-        </a>
       </nav>
 
       <!-- Actions -->
       <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
-        <!-- Client Profile widget (Optional account for leaving reviews) -->
+        <!-- Client Profile widget (Entrar / Criar Conta de Cliente) -->
         <div id="header-client-auth" class="flex-shrink-0">
           <button type="button" onclick="openClientAuthModal()" class="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-slate-100 px-2 sm:px-3 py-1.5 rounded-lg transition-colors border border-slate-200 shadow-sm active:scale-95 whitespace-nowrap">
             <span translate="no" class="notranslate material-symbols-outlined text-sm sm:text-base text-slate-500">person_outline</span>
@@ -118,10 +114,6 @@
           </button>
         </div>
 
-        <a href="/admin" class="hidden sm:inline-flex items-center gap-1 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors border border-slate-200 whitespace-nowrap flex-shrink-0">
-          <span translate="no" class="notranslate material-symbols-outlined text-sm text-brand-600">settings</span>
-          <span>Admin</span>
-        </a>
         <a href="/encontrar-tecnicos" class="bg-brand-600 hover:bg-brand-700 text-white text-[11px] sm:text-xs font-bold px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl transition-all shadow-sm active:scale-95 flex items-center gap-1 whitespace-nowrap flex-shrink-0">
           <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
           <span class="hidden sm:inline">Ver Agendas</span>
@@ -137,7 +129,7 @@
     <!-- Static Background Image & Overlays (No movement) -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
       <!-- High-resolution HVAC technician hero image (With generous headroom) -->
-      <img src="/hero-ac-technician.jpg" alt="Técnico de Ar-Condicionado ArConnect" class="w-full h-full object-cover object-[center_25%] filter brightness-[0.82] contrast-[1.05]" />
+      <img src="/hero-ac-technician.jpg" alt="Técnico de Ar-Condicionado ArConnect" class="w-full h-full object-cover object-[center_25%] filter brightness-[0.82] contrast-[1.05]" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1920&q=80';" />
       
       <!-- Elegant Dark Gradient Overlays for contrast & legibility -->
       <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/50 to-slate-950/85"></div>
@@ -575,7 +567,7 @@
       <!-- Brand & Description -->
       <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
         <a href="/" class="flex items-center" title="ArConnect Manaus">
-          <img src="/arconnect-logo.png" alt="ArConnect" class="h-6 sm:h-7 w-auto object-contain" />
+          <img src="/arconnect-logo.png" alt="ArConnect" class="h-6 sm:h-7 w-auto object-contain" onerror="this.onerror=null; this.src='arconnect-logo.png';" />
         </a>
         <span class="hidden sm:inline text-slate-300">•</span>
         <span class="text-[11px] sm:text-xs text-slate-500 font-medium">
@@ -823,36 +815,72 @@
         </div>
       </div>
 
-      <!-- State 2: No Client Registered Yet -->
+      <!-- State 2: No Client Registered Yet (Tabs for Login & Register) -->
       <div id="client-modal-guest" class="space-y-3">
-        <form onsubmit="handleQuickClientRegister(event)" class="space-y-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Seu Nome Completo *</label>
-            <input type="text" id="quick-client-name" required placeholder="Ex: Roberto Lima" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
-          </div>
+        <div class="flex border-b border-slate-200 mb-2">
+          <button type="button" onclick="switchClientTab('login')" id="tab-btn-login" class="flex-1 pb-2 text-xs font-bold text-brand-600 border-b-2 border-brand-600 transition-all text-center">
+            Já Tenho Conta (Entrar)
+          </button>
+          <button type="button" onclick="switchClientTab('register')" id="tab-btn-register" class="flex-1 pb-2 text-xs font-semibold text-slate-400 hover:text-slate-600 border-b-2 border-transparent transition-all text-center">
+            Criar Nova Conta
+          </button>
+        </div>
 
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Seu WhatsApp ou E-mail *</label>
-            <input type="text" id="quick-client-contact" required placeholder="(92) 98765-4321" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+        <!-- TAB 1: LOGIN -->
+        <div id="client-view-login" class="space-y-3">
+          <form onsubmit="handleClientLogin(event)" class="space-y-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu CEP</label>
-              <input type="text" id="quick-client-cep" maxlength="9" placeholder="00000-000" oninput="handleCepInput(this, 'quick-client-bairro')" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu WhatsApp ou E-mail cadastrado</label>
+              <input type="text" id="login-client-contact" required placeholder="(92) 99123-4567 ou seu@email.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
             </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu Bairro em Manaus</label>
-              <input type="text" id="quick-client-bairro" placeholder="Ex: Adrianópolis" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
-            </div>
-          </div>
 
-          <div class="pt-2">
-            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-sm transition-all active:scale-95">
-              Criar Perfil de Cliente
+            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-sm transition-all active:scale-95 flex items-center justify-center gap-1.5">
+              <span translate="no" class="notranslate material-symbols-outlined text-sm">login</span>
+              <span>Entrar na Minha Conta</span>
+            </button>
+          </form>
+
+          <!-- TEST CLIENT BUTTON -->
+          <div class="p-3 bg-brand-50/70 border border-brand-200/80 rounded-xl mt-2 text-center">
+            <span class="text-[11px] font-bold text-brand-900 block mb-0.5">Perfil de Teste Rápido:</span>
+            <p class="text-[10px] text-slate-600 mb-2">Carlos Augusto • Adrianópolis, Manaus</p>
+            <button type="button" onclick="loginAsTestClient()" class="w-full bg-white hover:bg-slate-50 text-brand-700 border border-brand-300 text-xs font-bold py-2 rounded-lg transition-all shadow-xs flex items-center justify-center gap-1">
+              <span>⚡ Entrar como Carlos Augusto (Teste)</span>
             </button>
           </div>
-        </form>
+        </div>
+
+        <!-- TAB 2: REGISTER -->
+        <div id="client-view-register" class="hidden space-y-3">
+          <form onsubmit="handleQuickClientRegister(event)" class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu Nome Completo *</label>
+              <input type="text" id="quick-client-name" required placeholder="Ex: Roberto Lima" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu WhatsApp ou E-mail *</label>
+              <input type="text" id="quick-client-contact" required placeholder="(92) 98765-4321" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Seu CEP</label>
+                <input type="text" id="quick-client-cep" maxlength="9" placeholder="00000-000" oninput="handleCepInput(this, 'quick-client-bairro')" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Seu Bairro em Manaus</label>
+                <input type="text" id="quick-client-bairro" placeholder="Ex: Adrianópolis" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+              </div>
+            </div>
+
+            <div class="pt-2">
+              <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-sm transition-all active:scale-95">
+                Criar Perfil e Entrar
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
 
     </div>
@@ -992,17 +1020,110 @@
       }
     }
 
-    function handleQuickClientRegister(e) {
+    const TEST_CLIENT = {
+      name: 'Carlos Augusto (Cliente Teste)',
+      contact: '(92) 99123-4567',
+      cep: '69057-000',
+      bairro: 'Adrianópolis'
+    };
+
+    function switchClientTab(tab) {
+      const isLogin = tab === 'login';
+      const btnLogin = document.getElementById('tab-btn-login');
+      const btnReg = document.getElementById('tab-btn-register');
+      const viewLogin = document.getElementById('client-view-login');
+      const viewReg = document.getElementById('client-view-register');
+
+      if (btnLogin && btnReg) {
+        btnLogin.className = isLogin 
+          ? 'flex-1 pb-2 text-xs font-bold text-brand-600 border-b-2 border-brand-600 transition-all text-center'
+          : 'flex-1 pb-2 text-xs font-semibold text-slate-400 hover:text-slate-600 border-b-2 border-transparent transition-all text-center';
+        btnReg.className = !isLogin 
+          ? 'flex-1 pb-2 text-xs font-bold text-brand-600 border-b-2 border-brand-600 transition-all text-center'
+          : 'flex-1 pb-2 text-xs font-semibold text-slate-400 hover:text-slate-600 border-b-2 border-transparent transition-all text-center';
+      }
+
+      if (viewLogin && viewReg) {
+        viewLogin.classList.toggle('hidden', !isLogin);
+        viewReg.classList.toggle('hidden', isLogin);
+      }
+    }
+
+    function loginAsTestClient() {
+      saveClient(TEST_CLIENT);
+      closeClientAuthModal();
+      showToast('Conectado como Carlos Augusto (Cliente Teste)!', 'person');
+    }
+
+    async function handleClientLogin(e) {
+      e.preventDefault();
+      const input = document.getElementById('login-client-contact').value.trim();
+      if (!input) return;
+
+      const clean = input.replace(/\D/g, '');
+      if (clean === '92991234567' || input.toLowerCase().includes('carlos') || input.toLowerCase().includes('teste')) {
+        loginAsTestClient();
+        return;
+      }
+
+      let found = null;
+      if (window.supabase) {
+        try {
+          const client = window.supabase.createClient('https://cyoimmsnsndqtouezgpg.supabase.co', 'sb_publishable_4Xhddi-Dvw0SYz7neqbgiQ_ZjbAEajg');
+          const { data } = await client.from('clients').select('*').or(`contact.ilike.%${input}%,name.ilike.%${input}%`).limit(1);
+          if (data && data.length > 0) {
+            found = {
+              name: data[0].name,
+              contact: data[0].contact,
+              cep: data[0].cep || '',
+              bairro: data[0].bairro || 'Manaus'
+            };
+          }
+        } catch (err) {
+          console.warn('Busca no Supabase:', err);
+        }
+      }
+
+      if (found) {
+        saveClient(found);
+        closeClientAuthModal();
+        showToast(`Bem-vindo de volta, ${found.name.split(' ')[0]}!`, 'person');
+      } else {
+        const fallbackClient = {
+          name: input.includes('@') ? input.split('@')[0] : 'Cliente ArConnect',
+          contact: input,
+          cep: '69000-000',
+          bairro: 'Manaus'
+        };
+        saveClient(fallbackClient);
+        closeClientAuthModal();
+        showToast(`Conectado como ${fallbackClient.contact}!`, 'person');
+      }
+    }
+
+    async function handleQuickClientRegister(e) {
       e.preventDefault();
       const name = document.getElementById('quick-client-name').value.trim();
       const contact = document.getElementById('quick-client-contact').value.trim();
       const cep = document.getElementById('quick-client-cep') ? document.getElementById('quick-client-cep').value.trim() : '';
-      const bairro = document.getElementById('quick-client-bairro').value.trim();
+      const bairro = document.getElementById('quick-client-bairro').value.trim() || 'Manaus';
 
       if (!name) return;
-      saveClient({ name, contact, cep, bairro });
+      const clientObj = { name, contact, cep, bairro };
+      saveClient(clientObj);
+
+      // Salvar no banco Supabase se disponível
+      if (window.supabase) {
+        try {
+          const client = window.supabase.createClient('https://cyoimmsnsndqtouezgpg.supabase.co', 'sb_publishable_4Xhddi-Dvw0SYz7neqbgiQ_ZjbAEajg');
+          await client.from('clients').insert(clientObj);
+        } catch (err) {
+          console.warn('Erro ao salvar cliente no Supabase:', err);
+        }
+      }
+
       closeClientAuthModal();
-      showToast('Perfil de cliente criado! Agora você pode avaliar profissionais.');
+      showToast('Perfil criado com sucesso! Agora você pode avaliar profissionais.');
     }
 
     // STAR RATING

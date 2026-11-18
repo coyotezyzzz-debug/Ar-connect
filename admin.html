@@ -72,7 +72,7 @@
       
       <div class="flex items-center gap-3">
         <a href="/" class="flex items-center group" title="ArConnect">
-          <img src="/arconnect-logo.png" alt="ArConnect" class="h-7 sm:h-8 w-auto object-contain transition-transform group-hover:scale-[1.02]" />
+          <img src="/arconnect-logo.png" alt="ArConnect" class="h-7 sm:h-8 w-auto object-contain transition-transform group-hover:scale-[1.02]" onerror="this.onerror=null; this.src='arconnect-logo.png';" />
         </a>
         <span class="text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md border border-slate-200">
           Painel Admin
@@ -95,6 +95,10 @@
           </div>
           <span class="hidden sm:inline">Administrador</span>
         </div>
+        <button type="button" onclick="adminLogout()" class="text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2.5 py-1.5 rounded-lg transition-colors font-medium flex items-center gap-1 border border-rose-200" title="Encerrar sessão de admin">
+          <span translate="no" class="notranslate material-symbols-outlined text-sm">logout</span>
+          <span class="hidden sm:inline">Sair</span>
+        </button>
       </div>
 
     </div>
@@ -752,8 +756,106 @@
       });
     }
 
+  <!-- ADMIN LOGIN GATE MODAL -->
+  <div id="admin-login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+    <div class="bg-white w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mx-auto mb-3 shadow-inner">
+          <span translate="no" class="notranslate material-symbols-outlined text-2xl">admin_panel_settings</span>
+        </div>
+        <h2 class="text-xl font-bold text-slate-900">Acesso Administrativo</h2>
+        <p class="text-xs text-slate-500 mt-1">Homologação e Gestão de Técnicos ArConnect Manaus</p>
+      </div>
+
+      <div id="admin-login-error" class="hidden mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-medium text-center">
+        E-mail ou senha incorretos. Verifique suas credenciais.
+      </div>
+
+      <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">E-mail do Administrador</label>
+          <input type="email" id="admin-input-email" required placeholder="admin@arconnect.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Senha de Acesso</label>
+          <input type="password" id="admin-input-pass" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+        </div>
+
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-3 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-1.5">
+          <span translate="no" class="notranslate material-symbols-outlined text-sm">lock_open</span>
+          <span>Acessar Painel</span>
+        </button>
+      </form>
+
+      <!-- TEST PROFILE SHORTCUT -->
+      <div class="mt-5 pt-4 border-t border-slate-100">
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <span class="text-[11px] font-bold text-slate-700 block mb-1">Credenciais do Perfil Admin:</span>
+          <p class="text-[11px] text-slate-500 font-mono">E-mail: <strong class="text-slate-800">admin@arconnect.com</strong></p>
+          <p class="text-[11px] text-slate-500 font-mono">Senha: <strong class="text-slate-800">admin2026</strong></p>
+          <button type="button" onclick="fillAdminTestCredentials()" class="mt-2 w-full bg-slate-200 hover:bg-slate-300 text-slate-800 text-[11px] font-semibold py-1.5 rounded-lg transition-colors">
+            ⚡ Preencher Acesso de Teste
+          </button>
+        </div>
+        <div class="text-center mt-3">
+          <a href="/" class="text-xs text-slate-400 hover:text-slate-600 transition-colors">← Voltar para a Plataforma</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_EMAIL = 'admin@arconnect.com';
+    const ADMIN_PASS = 'admin2026';
+
+    function checkAdminAuth() {
+      const isAuth = sessionStorage.getItem('arconnect_admin_auth') === 'true';
+      const modal = document.getElementById('admin-login-modal');
+      if (!isAuth) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('admin-input-email').value.trim();
+      const pass = document.getElementById('admin-input-pass').value.trim();
+      const errorMsg = document.getElementById('admin-login-error');
+
+      if (email.toLowerCase() === ADMIN_EMAIL && pass === ADMIN_PASS) {
+        sessionStorage.setItem('arconnect_admin_auth', 'true');
+        checkAdminAuth();
+        showToast('Login de administrador realizado com sucesso!');
+      } else {
+        errorMsg.classList.remove('hidden');
+        setTimeout(() => errorMsg.classList.add('hidden'), 4000);
+      }
+    }
+
+    function fillAdminTestCredentials() {
+      document.getElementById('admin-input-email').value = ADMIN_EMAIL;
+      document.getElementById('admin-input-pass').value = ADMIN_PASS;
+    }
+
+    function adminLogout() {
+      if (confirm('Deseja sair do Painel Administrativo?')) {
+        sessionStorage.removeItem('arconnect_admin_auth');
+        window.location.href = '/';
+      }
+    }
+  </script>
+
+  <script>
     // Initial load
     document.addEventListener('DOMContentLoaded', () => {
+      checkAdminAuth();
       loadTechnicians();
       loadAdminReviews();
     });
