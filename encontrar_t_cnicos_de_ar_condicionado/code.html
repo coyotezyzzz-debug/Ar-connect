@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no" class="notranslate">
+
+<head>
+  <meta name="google" content="notranslate"/>
+  <meta http-equiv="Content-Language" content="pt-BR"/>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Agendar Técnico de Ar-Condicionado - ArConnect</title>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
+    rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff8ff',
+              100: '#dbeafe',
+              500: '#0284c7',
+              600: '#006194',
+              700: '#0369a1',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+      width: 100%;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scrollbar-gutter: stable;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important;
+      font-weight: normal;
+      font-style: normal;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+      width: 1em;
+      height: 1em;
+      overflow: hidden;
+      vertical-align: middle;
+      flex-shrink: 0;
+      user-select: none;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+
+    .star-btn.active {
+      color: #f59e0b;
+      font-variation-settings: 'FILL' 1;
+    }
+
+    .star-btn {
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+
+    .star-btn:hover {
+      color: #fbbf24;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50/60 text-slate-800 min-h-screen flex flex-col antialiased overflow-x-hidden w-full">
+
+  <!-- HEADER (Mobile & Desktop Proportional) -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 w-full">
+    <div class="max-w-[1520px] mx-auto px-3.5 sm:px-6 lg:px-8 xl:px-10 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
+
+      <!-- Brand Logo (ArConnect Oficial) -->
+      <a href="/" class="flex items-center group flex-shrink-0" title="ArConnect">
+        <img src="/arconnect-logo.png" alt="ArConnect" class="h-6 sm:h-8 max-w-[115px] sm:max-w-none w-auto object-contain transition-transform group-hover:scale-[1.02]" style="height: 24px; max-height: 32px; width: auto;" />
+      </a>
+
+      <!-- Menu Navigation (Desktop) -->
+      <nav class="hidden md:flex items-center gap-1">
+        <a href="/"
+          class="px-3.5 py-1.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+          Início
+        </a>
+        <a href="/encontrar-tecnicos"
+          class="px-3.5 py-1.5 rounded-lg text-sm font-semibold text-brand-600 bg-brand-50 transition-colors">
+          Agendar Técnico
+        </a>
+        <a href="/#como-funciona"
+          class="px-3.5 py-1.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+          Como Funciona
+        </a>
+        <a href="/admin"
+          class="px-3.5 py-1.5 rounded-lg text-sm font-semibold text-slate-700 hover:text-brand-600 hover:bg-slate-100 transition-colors flex items-center gap-1">
+          <span translate="no" class="notranslate material-symbols-outlined text-sm text-brand-600">admin_panel_settings</span>
+          <span>Admin</span>
+        </a>
+      </nav>
+
+      <!-- Client Profile / Admin Action -->
+      <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        <a href="/admin"
+          class="hidden sm:inline-flex items-center gap-1 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors border border-slate-200">
+          <span translate="no" class="notranslate material-symbols-outlined text-sm text-brand-600">settings</span>
+          <span>Admin</span>
+        </a>
+
+        <!-- Dynamic Client Container: Guest or Logged Client -->
+        <div id="header-client-auth" class="flex-shrink-0">
+          <button type="button" onclick="openClientAuthModal()"
+            class="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 px-2.5 sm:px-3.5 py-1.5 rounded-lg transition-colors border border-slate-200 shadow-sm active:scale-95 whitespace-nowrap flex-shrink-0">
+            <span translate="no" class="notranslate material-symbols-outlined text-sm sm:text-base text-slate-400">person_outline</span>
+            <span class="hidden sm:inline">Perfil do Cliente</span>
+            <span class="sm:hidden">Cliente</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SEARCH & FILTER BAR -->
+  <section class="bg-white border-b border-slate-200/80 py-3 sm:py-4">
+    <div class="max-w-[1520px] mx-auto px-3.5 sm:px-6 lg:px-8 xl:px-10">
+
+      <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-3">
+        <!-- Search input -->
+        <div
+          class="flex-1 flex items-center bg-slate-100/80 hover:bg-slate-100 rounded-xl px-3.5 py-2.5 transition-colors border border-transparent focus-within:border-brand-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-brand-500/20">
+          <span translate="no" class="notranslate material-symbols-outlined text-slate-400 text-lg sm:text-xl mr-2 flex-shrink-0">search</span>
+          <input type="text" id="search-input" onkeyup="handleSearch(this.value)"
+            placeholder="Buscar por bairro, técnico ou especialidade..."
+            class="w-full bg-transparent text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none" />
+        </div>
+
+        <!-- City & Sorting -->
+        <div class="flex items-center justify-between sm:justify-end gap-2 w-full md:w-auto">
+          <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-600 bg-slate-100/80 px-2.5 sm:px-3.5 py-2 rounded-xl flex-shrink-0">
+            <span translate="no" class="notranslate material-symbols-outlined text-sm text-brand-600">location_on</span>
+            <span class="font-medium text-slate-700">Manaus, AM</span>
+          </div>
+
+          <select id="sort-select" onchange="sortCards(this.value)"
+            class="bg-slate-100/80 text-[11px] sm:text-xs font-semibold text-slate-700 px-2.5 sm:px-3.5 py-2 rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer">
+            <option value="melhores">Melhor avaliados</option>
+            <option value="distancia">Mais próximos</option>
+            <option value="disponibilidade">Agenda mais rápida</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Service category pills (Smooth edge-to-edge scroll on mobile) -->
+      <div class="flex items-center gap-2 overflow-x-auto pt-3.5 pb-1 -mx-3.5 px-3.5 sm:mx-0 sm:px-0 no-scrollbar">
+        <button type="button" onclick="filterCategory('todos', this)"
+          class="category-pill bg-slate-900 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap flex-shrink-0 shadow-xs">
+          Todos os Técnicos
+        </button>
+        <button type="button" onclick="filterCategory('instalacao', this)"
+          class="category-pill bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap flex-shrink-0">
+          Instalação
+        </button>
+        <button type="button" onclick="filterCategory('limpeza', this)"
+          class="category-pill bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap flex-shrink-0">
+          Higienização
+        </button>
+        <button type="button" onclick="filterCategory('gas', this)"
+          class="category-pill bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap flex-shrink-0">
+          Carga de Gás
+        </button>
+        <button type="button" onclick="filterCategory('manutencao', this)"
+          class="category-pill bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap flex-shrink-0">
+          Manutenção
+        </button>
+        <button type="button" onclick="filterCategory('pmoc', this)"
+          class="category-pill bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap flex-shrink-0">
+          PMOC Comercial
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MAIN LIST CONTAINER (Wider, proportional for PC) -->
+  <main class="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-7 w-full flex-1">
+
+    <div class="flex flex-col lg:flex-row gap-6 items-start">
+
+      <!-- SIMPLE CLEAN FILTERS (Left Sidebar, Sticky) -->
+      <aside class="hidden lg:block w-72 xl:w-80 flex-shrink-0 bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-5 sticky top-20">
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Disponibilidade de Agenda</h3>
+
+          <label class="flex items-center gap-2.5 text-xs font-semibold text-slate-700 cursor-pointer">
+            <input type="checkbox" id="urgencia-check" onchange="filterUrgent(this.checked)"
+              class="w-4 h-4 rounded text-brand-600 focus:ring-0 cursor-pointer" />
+            <span>Horários Livres para Hoje</span>
+          </label>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100">
+          <h4 class="text-xs font-semibold text-slate-700 mb-2.5">Tipo de Aparelho</h4>
+          <div class="space-y-2 text-xs text-slate-600">
+            <label class="flex items-center gap-2 cursor-pointer hover:text-slate-900">
+              <input type="checkbox" checked class="w-3.5 h-3.5 rounded text-brand-600 focus:ring-0" />
+              <span>Split Hi-Wall</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-slate-900">
+              <input type="checkbox" checked class="w-3.5 h-3.5 rounded text-brand-600 focus:ring-0" />
+              <span>Multi-Split / Inverter</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-slate-900">
+              <input type="checkbox" checked class="w-3.5 h-3.5 rounded text-brand-600 focus:ring-0" />
+              <span>Cassete / Piso Teto</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-slate-900">
+              <input type="checkbox" class="w-3.5 h-3.5 rounded text-brand-600 focus:ring-0" />
+              <span>VRF / Dutos</span>
+            </label>
+          </div>
+        </div>
+
+        <div
+          class="pt-4 border-t border-slate-100 text-[11px] text-slate-500 leading-relaxed bg-slate-50 -mx-5 -mb-5 p-4 rounded-b-2xl">
+          <div class="flex items-center gap-1.5 font-bold text-slate-700 mb-1">
+            <span translate="no" class="notranslate material-symbols-outlined text-sm text-brand-600">calendar_month</span>
+            Agendamento Rápido
+          </div>
+          Selecione o profissional desejado, envie seus dados de contato e combine os detalhes no WhatsApp sem necessidade de login.
+        </div>
+      </aside>
+
+      <!-- TECHNICIANS CARDS (2-Column Grid on PC for perfect proportion) -->
+      <section class="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-4.5 w-full" id="cards-container">
+
+        <!-- CARD 1: Matheus Silva -->
+        <article
+          class="tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5"
+          data-category="instalacao" data-urgent="true">
+          <div class="flex items-start gap-3 sm:gap-4">
+            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrD9Q71351UvQUcfyiYUt7RNYQ4sdeNkX2ecTKdjK7K2tQtem0yx_zMAwazOunHpBZ8WIL2fqpXYI9uFD1P8zkilTkgZSgXDB5Bs5H7h-rIn8E7oi7HIsLFl3Ple7Cqt4DWXSWHC3ETcvWLU5Gmf7UNWApTJlfxhuQNVrrDDZpkpcosvM2CS6OPfVdKJBDZm7XKFUlnnZelr24uXWJJKfyMjoVsTYb8LkoHZzlr2Q"
+              alt="Matheus Silva" />
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">Matheus Silva</h3>
+                <span
+                  class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                  <span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> Verificado
+                </span>
+              </div>
+              <p class="text-xs text-slate-600 mt-0.5 leading-snug">Instalação Split & Inverter</p>
+              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+                <span class="flex items-center text-amber-500 font-bold">
+                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> 4.98
+                </span>
+                <span class="text-slate-300">•</span>
+                <span>142 atendimentos</span>
+                <span class="text-slate-300">•</span>
+                <span class="font-medium text-slate-700">Adrianópolis</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-[11px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Agenda aberta hoje
+              </span>
+              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+            </div>
+            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+              <button type="button" onclick="openReviewModal('Matheus Silva', '1')"
+                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                title="Avaliar este profissional">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
+                <span>Avaliar</span>
+              </button>
+              <button type="button" onclick="openRequestModal('Matheus Silva', 'Instalação Split & Inverter', '(92) 99821-4402')"
+                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                <span>Agendar</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 2: Carlos Eduardo -->
+        <article
+          class="tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5"
+          data-category="limpeza" data-urgent="true">
+          <div class="flex items-start gap-3 sm:gap-4">
+            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAywRYIJ-eLIPLENtyqI1oN24k31UWahvSYUTf8fNYIDFims1S5g-k_BuNC2ma1aoGqhGPSSg_6FKPhULCGXJ7_I7Ao_wVZw0i57sBW2FTMtUXYs74jPNpZjdy9lTqBXUU3yy4GvtFs3m6zF4TMgl9fqk0wgqzuH302zu-mwispK5pbPbT11wMe4fDbWqujnWkdPGZVgHjTuNiO3uHQIBPnnRtsfjbGwPwe62WzfZc"
+              alt="Carlos Eduardo" />
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">Carlos Eduardo Mendes</h3>
+                <span
+                  class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                  <span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> Verificado
+                </span>
+              </div>
+              <p class="text-xs text-slate-600 mt-0.5 leading-snug">Higienização Profunda & PMOC</p>
+              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+                <span class="flex items-center text-amber-500 font-bold">
+                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> 4.90
+                </span>
+                <span class="text-slate-300">•</span>
+                <span>87 atendimentos</span>
+                <span class="text-slate-300">•</span>
+                <span class="font-medium text-slate-700">Parque 10</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-[11px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Agenda aberta hoje
+              </span>
+              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+            </div>
+            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+              <button type="button" onclick="openReviewModal('Carlos Eduardo Mendes', '2')"
+                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                title="Avaliar este profissional">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
+                <span>Avaliar</span>
+              </button>
+              <button type="button" onclick="openRequestModal('Carlos Eduardo Mendes', 'Higienização Profunda & PMOC', '(92) 98765-1122')"
+                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                <span>Agendar</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 3: Juliana Vasconcelos -->
+        <article
+          class="tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5"
+          data-category="gas" data-urgent="true">
+          <div class="flex items-start gap-3 sm:gap-4">
+            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD54ajqz4GCQ6Ta8TxmzC1B68s0dJJypUDKCKZJkiHVTXXUUZsskc0HHJzjM1Yg9MsWEkF1JnMVWoddEzmGXKsbzfLTEJKjR4bEkrLBadWAxRvNUcBLmC9RvctPBlUKRtVzJdPDln5Kj8PA2whBmqhjMj4k3vX3t6t3yFQmKxgXgBdt0A-N5X0P6hVfM6e_ySh_0NTpzLMmsMJp7FqF-OL-XzXb0tHtj1xpcypH3_M"
+              alt="Juliana Vasconcelos" />
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">Juliana Vasconcelos</h3>
+                <span
+                  class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                  <span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> Verificado
+                </span>
+              </div>
+              <p class="text-xs text-slate-600 mt-0.5 leading-snug">Carga de Gás & Limpeza Preventiva</p>
+              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+                <span class="flex items-center text-amber-500 font-bold">
+                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> 4.95
+                </span>
+                <span class="text-slate-300">•</span>
+                <span>118 atendimentos</span>
+                <span class="text-slate-300">•</span>
+                <span class="font-medium text-slate-700">Vieiralves</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-[11px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Agenda aberta hoje
+              </span>
+              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+            </div>
+            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+              <button type="button" onclick="openReviewModal('Juliana Vasconcelos', '3')"
+                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                title="Avaliar este profissional">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
+                <span>Avaliar</span>
+              </button>
+              <button type="button" onclick="openRequestModal('Juliana Vasconcelos', 'Carga de Gás & Limpeza Preventiva', '(92) 97654-3344')"
+                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                <span>Agendar</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 4: Roberto Santos -->
+        <article
+          class="tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5"
+          data-category="manutencao" data-urgent="false">
+          <div class="flex items-start gap-3 sm:gap-4">
+            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCv3nwZS9O4_26c4zAEGYq9kx0GuZYVEKbGA9ivelo7hTLBUV37PZfrA6V8lh1KTRAI_Q2ykZK10TLqX2VXC8Yke1k13TGw2jlCJdjbDFf6AX8NYpaEhOA1fZtmP92kRJDU5fN6VG1TYTj8MklFt8cyFulLL65UkAVBD4Zcvm7vQhutE970OuEWl7zw4F1TUP-y-3vDyf5NDb8cXVVzSAWNXziBgmysjCS_luD3ST4"
+              alt="Roberto Santos" />
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">Roberto Santos</h3>
+                <span
+                  class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                  <span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> Verificado
+                </span>
+              </div>
+              <p class="text-xs text-slate-600 mt-0.5 leading-snug">Manutenção & Conserto de Placas</p>
+              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+                <span class="flex items-center text-amber-500 font-bold">
+                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> 4.85
+                </span>
+                <span class="text-slate-300">•</span>
+                <span>63 atendimentos</span>
+                <span class="text-slate-300">•</span>
+                <span class="font-medium text-slate-700">Ponta Negra</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Horários a combinar</span>
+              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+            </div>
+            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+              <button type="button" onclick="openReviewModal('Roberto Santos', '4')"
+                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                title="Avaliar este profissional">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
+                <span>Avaliar</span>
+              </button>
+              <button type="button" onclick="openRequestModal('Roberto Santos', 'Manutenção & Conserto de Placas', '(92) 96543-2211')"
+                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                <span>Agendar</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 5: Eng. Renato Albuquerque -->
+        <article
+          class="tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5"
+          data-category="pmoc" data-urgent="false">
+          <div class="flex items-start gap-3 sm:gap-4">
+            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYSVKkwgA9x7igy8XF5YXj-_vWFEQYkDaNz25XCaqCxbeSe84mIPuRH4RTzH1o3GAj3TO9hE7EPefVPusIb_B_F1581mrbcyk-YFi_C4ogO-PHS6HmOqU5yUh92U388xBJUv4u-LTUY1lJYXZDvEtUzTh0WGoafmhMJFHGGAXqr0q0Lpdp2zA2srTaxVpzxPjBjSUmqYZjdPM3qcCUlOwKkzgkOed_ZMyTIwPblnw"
+              alt="Eng. Renato Albuquerque" />
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">Eng. Renato Albuquerque</h3>
+                <span
+                  class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                  <span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> CREA Ativo
+                </span>
+              </div>
+              <p class="text-xs text-slate-600 mt-0.5 leading-snug">Laudos Técnicos ART & PMOC</p>
+              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+                <span class="flex items-center text-amber-500 font-bold">
+                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> 5.0
+                </span>
+                <span class="text-slate-300">•</span>
+                <span>94 laudos</span>
+                <span class="text-slate-300">•</span>
+                <span class="font-medium text-slate-700">Flores</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Vistoria com hora marcada</span>
+              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+            </div>
+            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+              <button type="button" onclick="openReviewModal('Eng. Renato Albuquerque', '5')"
+                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                title="Avaliar este profissional">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
+                <span>Avaliar</span>
+              </button>
+              <button type="button" onclick="openRequestModal('Eng. Renato Albuquerque', 'Laudos Técnicos ART & PMOC', '(92) 95432-8899')"
+                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                <span>Agendar</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- SIMPLE FOOTER (Mobile & Desktop Proportional) -->
+  <footer class="bg-white border-t border-slate-200/80 py-7 sm:py-9 mt-12 text-slate-500 text-xs">
+    <div
+      class="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+        <a href="/" class="flex items-center" title="ArConnect Manaus">
+          <img src="/arconnect-logo.png" alt="ArConnect" class="h-6 sm:h-7 w-auto object-contain" />
+        </a>
+        <span class="hidden sm:inline text-slate-300">•</span>
+        <span class="text-[11px] sm:text-xs text-slate-500 font-medium">
+          Agendamento de Ar-Condicionado em Manaus, AM
+        </span>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-[11px] sm:text-xs text-slate-400">
+        <p>&copy; 2026 ArConnect Manaus. Conectando você aos melhores técnicos.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CLEAN BOOKING MODAL (Zero Account/Login Requirement - Mobile First) -->
+  <div id="booking-modal" onclick="if(event.target === this) closeRequestModal()"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+    <div
+      class="bg-white w-full max-w-md rounded-2xl p-4 sm:p-6 shadow-2xl relative animate-in fade-in duration-200 my-auto overscroll-contain"
+      onclick="event.stopPropagation()">
+
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Agendar Visita Técnica</h3>
+          <p id="modal-sub" class="text-xs text-brand-600 font-medium">Técnico Selecionado</p>
+        </div>
+        <button type="button" onclick="closeRequestModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <span translate="no" class="notranslate material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <!-- Direct WhatsApp reminder banner -->
+      <div
+        class="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-3 py-1.5 rounded-xl mb-3">
+        <span translate="no" class="notranslate material-symbols-outlined text-sm text-emerald-600 flex-shrink-0">chat</span>
+        <span>Agendamento Direto no WhatsApp • Sem necessidade de cadastro.</span>
+      </div>
+
+      <form onsubmit="handleFormSubmit(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Qual é a necessidade? *</label>
+          <select id="booking-service"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            required>
+            <option value="Higienização / Limpeza Preventiva" selected>Higienização / Limpeza Preventiva</option>
+            <option value="Instalação de Ar-Condicionado">Instalação de Ar-Condicionado</option>
+            <option value="Carga de Gás / Verificação de Vazamento">Carga de Gás / Verificação de Vazamento</option>
+            <option value="Conserto (Não liga / Não gela / Barulho)">Conserto (Não liga / Não gela / Barulho)</option>
+            <option value="PMOC / Manutenção Predial Comercial">PMOC / Manutenção Predial Comercial</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Marca do Aparelho</label>
+            <input type="text" id="booking-brand" placeholder="Ex: LG, Gree, Midea"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Capacidade</label>
+            <select id="booking-capacity"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <option value="9.000 BTUs">9.000 BTUs</option>
+              <option value="12.000 BTUs" selected>12.000 BTUs</option>
+              <option value="18.000 BTUs">18.000 BTUs</option>
+              <option value="24.000+ BTUs">24.000+ BTUs</option>
+              <option value="Não sei informar">Não sei informar</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Data Preferida para o Atendimento *</label>
+          <input type="date" id="booking-date" required
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Seu CEP</label>
+            <input type="text" id="booking-cep" maxlength="9" placeholder="00000-000" oninput="handleCepInput(this, 'booking-bairro')"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Seu Bairro em Manaus *</label>
+            <input type="text" id="booking-bairro" placeholder="Ex: Adrianópolis, Ponta Negra" required
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+          </div>
+        </div>
+
+        <div class="p-2.5 bg-emerald-50 border border-emerald-200/80 rounded-xl text-[11px] text-emerald-800 leading-relaxed flex items-center gap-2">
+          <span translate="no" class="notranslate material-symbols-outlined text-emerald-600 text-base flex-shrink-0">chat</span>
+          <span>Ao clicar, você será direcionado ao WhatsApp do profissional com o agendamento já montado para fechar direto.</span>
+        </div>
+
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-end gap-2">
+          <button type="submit"
+            class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm transition-all active:scale-95 flex items-center justify-center gap-1.5 order-1 sm:order-2">
+            <span translate="no" class="notranslate material-symbols-outlined text-sm">chat</span>
+            <span>Agendar no WhatsApp</span>
+          </button>
+          <button type="button" onclick="closeRequestModal()"
+            class="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl text-center order-2 sm:order-1">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- REVIEW MODAL (Client Exclusive Flow) -->
+  <div id="review-modal" onclick="if(event.target === this) closeReviewModal()"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+    <div
+      class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl relative animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto overscroll-contain my-auto"
+      onclick="event.stopPropagation()">
+
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Avaliar Profissional</h3>
+          <p id="review-tech-title" class="text-xs text-brand-600 font-medium">Técnico Selecionado</p>
+        </div>
+        <button type="button" onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <span translate="no" class="notranslate material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <div
+        class="p-3 bg-amber-50 border border-amber-200/70 rounded-xl text-[11px] text-amber-900 mb-3 flex items-start gap-2">
+        <span translate="no" class="notranslate material-symbols-outlined text-base text-amber-600 flex-shrink-0">verified_user</span>
+        <span>As avaliações são exclusivas para clientes atendidos. Identifique-se com seu perfil para publicar seu
+          relato autêntico.</span>
+      </div>
+
+      <form onsubmit="handleReviewSubmit(event)" class="space-y-3.5">
+        <input type="hidden" id="review-tech-id" value="" />
+        <input type="hidden" id="review-tech-name" value="" />
+
+        <!-- Client Identity Section -->
+        <div id="review-client-identified"
+          class="hidden p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs"
+              id="review-client-avatar">
+              C
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-900 block" id="review-client-name-display">Cliente</span>
+              <span class="text-[10px] text-slate-400">Perfil de Cliente Conectado</span>
+            </div>
+          </div>
+          <button type="button" onclick="disconnectClient()"
+            class="text-[11px] font-semibold text-brand-600 hover:underline">
+            Trocar
+          </button>
+        </div>
+
+        <!-- Client Form (if not logged in) -->
+        <div id="review-client-fields" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Seu Nome Completo (Cliente) *</label>
+            <input type="text" id="review-input-name" placeholder="Ex: Mariana Fagundes"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu WhatsApp / E-mail *</label>
+              <input type="text" id="review-input-contact" placeholder="(92) 98765-4321"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu CEP</label>
+              <input type="text" id="review-input-cep" maxlength="9" placeholder="00000-000" oninput="handleCepInput(this, 'review-input-bairro')"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu Bairro *</label>
+              <input type="text" id="review-input-bairro" placeholder="Ex: Adrianópolis"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Rating Stars -->
+        <div class="pt-2">
+          <label class="block text-xs font-semibold text-slate-700 mb-1.5">Sua Nota para o Atendimento *</label>
+          <div class="flex items-center gap-1.5" id="star-rating-box">
+            <span translate="no" class="notranslate material-symbols-outlined text-2xl star-btn active" onclick="setStarRating(1)">star</span>
+            <span translate="no" class="notranslate material-symbols-outlined text-2xl star-btn active" onclick="setStarRating(2)">star</span>
+            <span translate="no" class="notranslate material-symbols-outlined text-2xl star-btn active" onclick="setStarRating(3)">star</span>
+            <span translate="no" class="notranslate material-symbols-outlined text-2xl star-btn active" onclick="setStarRating(4)">star</span>
+            <span translate="no" class="notranslate material-symbols-outlined text-2xl star-btn active" onclick="setStarRating(5)">star</span>
+            <span id="star-rating-label" class="ml-2 text-xs font-bold text-amber-600">5.0 - Excelente</span>
+          </div>
+          <input type="hidden" id="review-rating-value" value="5" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Serviço Realizado *</label>
+          <select id="review-service"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <option value="Instalação Split / Inverter">Instalação Split / Inverter</option>
+            <option value="Higienização & Limpeza">Higienização & Limpeza</option>
+            <option value="Carga de Gás & Teste">Carga de Gás & Teste</option>
+            <option value="Conserto / Troca de Peças">Conserto / Troca de Peças</option>
+            <option value="PMOC / Laudo">PMOC / Laudo</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Seu Comentário sobre o Profissional *</label>
+          <textarea id="review-comment" rows="3" required
+            placeholder="Conte como foi o atendimento (pontualidade, cuidado com a limpeza, clareza nas explicações)..."
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeReviewModal()"
+            class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">
+            Cancelar
+          </button>
+          <button type="submit"
+            class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm transition-all active:scale-95 flex items-center gap-1.5">
+            <span translate="no" class="notranslate material-symbols-outlined text-sm">send</span>
+            Publicar Avaliação
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CLIENT PROFILE MODAL (Optional Account Management) -->
+  <div id="client-modal" onclick="if(event.target === this) closeClientAuthModal()"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+    <div
+      class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl relative animate-in fade-in duration-200 my-auto overscroll-contain"
+      onclick="event.stopPropagation()">
+
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center font-bold">
+            <span translate="no" class="notranslate material-symbols-outlined text-lg">person</span>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Perfil do Cliente</h3>
+            <span class="text-[10px] text-slate-400">Totalmente Opcional</span>
+          </div>
+        </div>
+        <button type="button" onclick="closeClientAuthModal()"
+          class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <span translate="no" class="notranslate material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <!-- State 1: Client Already Registered -->
+      <div id="client-modal-registered" class="hidden space-y-4">
+        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-center">
+          <div
+            class="w-14 h-14 rounded-full bg-brand-600 text-white flex items-center justify-center font-extrabold text-xl mx-auto mb-2.5 shadow-sm"
+            id="client-card-initial">
+            C
+          </div>
+          <h4 class="text-sm font-bold text-slate-900" id="client-card-name">Nome do Cliente</h4>
+          <p class="text-xs text-slate-500" id="client-card-contact">contato</p>
+          <span
+            class="inline-block mt-2 text-[10px] font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+            Cliente Habilitado a Avaliar
+          </span>
+        </div>
+
+        <p class="text-xs text-slate-500 leading-relaxed text-center">
+          Com seu perfil de cliente, você pode deixar notas e comentários em qualquer profissional que prestou
+          atendimento para você.
+        </p>
+
+        <div class="pt-2 flex flex-col gap-2">
+          <button type="button" onclick="closeClientAuthModal()"
+            class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 rounded-xl transition-colors">
+            Fechar
+          </button>
+          <button type="button" onclick="disconnectClient()"
+            class="w-full text-rose-600 hover:text-rose-700 text-xs font-semibold py-1.5 transition-colors">
+            Desconectar Perfil
+          </button>
+        </div>
+      </div>
+
+      <!-- State 2: No Client Registered Yet -->
+      <div id="client-modal-guest" class="space-y-3">
+        <form onsubmit="handleQuickClientRegister(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Seu Nome Completo *</label>
+            <input type="text" id="quick-client-name" required placeholder="Ex: Roberto Lima"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Seu WhatsApp ou E-mail *</label>
+            <input type="text" id="quick-client-contact" required placeholder="(92) 98765-4321"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu CEP</label>
+              <input type="text" id="quick-client-cep" maxlength="9" placeholder="00000-000" oninput="handleCepInput(this, 'quick-client-bairro')"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu Bairro em Manaus</label>
+              <input type="text" id="quick-client-bairro" placeholder="Ex: Adrianópolis"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <button type="submit"
+              class="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-sm transition-all active:scale-95">
+              Criar Perfil de Cliente
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SUCCESS TOAST -->
+  <div id="toast"
+    class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-lg border border-slate-800 flex items-center gap-2">
+    <span translate="no" class="notranslate material-symbols-outlined text-emerald-400 text-base" id="toast-icon">check_circle</span>
+    <span id="toast-msg">Agendamento enviado! O técnico confirmará o horário no seu WhatsApp.</span>
+  </div>
+
+  <script>
+    // CLIENT PROFILE MANAGEMENT (Only clients have profiles, purely optional for reviews)
+    function getStoredClient() {
+      try {
+        const raw = localStorage.getItem('arconnect_client') || localStorage.getItem('climapro_client');
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function saveClient(client) {
+      localStorage.setItem('arconnect_client', JSON.stringify(client));
+      updateClientUI();
+    }
+
+    function disconnectClient() {
+      localStorage.removeItem('arconnect_client');
+      localStorage.removeItem('climapro_client');
+      updateClientUI();
+      closeClientAuthModal();
+      showToast('Perfil de cliente desconectado.', 'info');
+    }
+
+    function updateClientUI() {
+      const client = getStoredClient();
+      const container = document.getElementById('header-client-auth');
+
+      if (client && client.name) {
+        const initial = client.name.charAt(0).toUpperCase();
+        container.innerHTML = `
+          <button type="button" onclick="openClientAuthModal()" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 px-2 sm:px-3 py-1.5 rounded-xl border border-slate-200 transition-colors active:scale-95 whitespace-nowrap flex-shrink-0">
+            <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-[10px] flex-shrink-0">
+              ${initial}
+            </div>
+            <span class="text-xs font-semibold text-slate-800 hidden sm:inline">${client.name.split(' ')[0]} (Cliente)</span>
+            <span class="text-[11px] font-semibold text-slate-800 sm:hidden">${client.name.split(' ')[0]}</span>
+          </button>
+        `;
+
+        // Update Client modal states
+        document.getElementById('client-modal-registered').classList.remove('hidden');
+        document.getElementById('client-modal-guest').classList.add('hidden');
+        document.getElementById('client-card-initial').innerText = initial;
+        document.getElementById('client-card-name').innerText = client.name;
+        const locParts = [client.bairro, client.cep].filter(Boolean).join(' • ');
+        document.getElementById('client-card-contact').innerText = client.contact ? (locParts ? `${client.contact} (${locParts})` : client.contact) : (locParts || 'Cliente Verificado');
+
+        // Update Review modal state
+        document.getElementById('review-client-identified').classList.remove('hidden');
+        document.getElementById('review-client-fields').classList.add('hidden');
+        document.getElementById('review-client-avatar').innerText = initial;
+        document.getElementById('review-client-name-display').innerText = client.name;
+      } else {
+        container.innerHTML = `
+          <button type="button" onclick="openClientAuthModal()" class="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 px-2.5 sm:px-3.5 py-1.5 rounded-lg transition-colors border border-slate-200 shadow-sm active:scale-95">
+            <span translate="no" class="notranslate material-symbols-outlined text-sm sm:text-base text-slate-400">person_outline</span>
+            <span class="hidden sm:inline">Perfil do Cliente</span>
+            <span class="sm:hidden">Cliente</span>
+          </button>
+        `;
+
+        document.getElementById('client-modal-registered').classList.add('hidden');
+        document.getElementById('client-modal-guest').classList.remove('hidden');
+
+        document.getElementById('review-client-identified').classList.add('hidden');
+        document.getElementById('review-client-fields').classList.remove('hidden');
+      }
+    }
+
+    function lockBackgroundScroll() {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    }
+
+    function unlockBackgroundScroll() {
+      const openModals = document.querySelectorAll('#booking-modal.flex, #review-modal.flex, #client-modal.flex');
+      if (openModals.length === 0) {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      }
+    }
+
+    function openClientAuthModal() {
+      lockBackgroundScroll();
+      const m = document.getElementById('client-modal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+
+    function closeClientAuthModal() {
+      const m = document.getElementById('client-modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+      unlockBackgroundScroll();
+    }
+
+    async function handleCepInput(inputElem, targetBairroId) {
+      if (!inputElem) return;
+      let val = inputElem.value.replace(/\D/g, '');
+      if (val.length > 8) val = val.slice(0, 8);
+      if (val.length > 5) {
+        inputElem.value = val.slice(0, 5) + '-' + val.slice(5);
+      } else {
+        inputElem.value = val;
+      }
+
+      if (val.length === 8) {
+        const bairroField = document.getElementById(targetBairroId);
+        try {
+          const res = await fetch(`https://viacep.com.br/ws/${val}/json/`);
+          if (res.ok) {
+            const data = await res.json();
+            if (!data.erro && bairroField) {
+              const loc = data.bairro ? (data.bairro + (data.localidade && data.localidade !== 'Manaus' ? ` (${data.localidade})` : '')) : (data.localidade || '');
+              if (loc) {
+                bairroField.value = loc;
+                bairroField.classList.add('ring-2', 'ring-emerald-400', 'bg-emerald-50');
+                setTimeout(() => {
+                  bairroField.classList.remove('ring-2', 'ring-emerald-400', 'bg-emerald-50');
+                }, 1200);
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('ViaCEP offline:', err);
+        }
+      }
+    }
+
+    function handleQuickClientRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('quick-client-name').value.trim();
+      const contact = document.getElementById('quick-client-contact').value.trim();
+      const cep = document.getElementById('quick-client-cep') ? document.getElementById('quick-client-cep').value.trim() : '';
+      const bairro = document.getElementById('quick-client-bairro').value.trim();
+
+      if (!name) return;
+      saveClient({ name, contact, cep, bairro });
+      closeClientAuthModal();
+      showToast('Perfil de cliente criado! Agora você pode avaliar profissionais.');
+    }
+
+    // STAR RATING LOGIC
+    let currentRating = 5;
+    function setStarRating(stars) {
+      currentRating = stars;
+      document.getElementById('review-rating-value').value = stars;
+      const starBtns = document.querySelectorAll('.star-btn');
+      starBtns.forEach((btn, idx) => {
+        if (idx < stars) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      const labels = {
+        1: '1.0 - Insatisfeito',
+        2: '2.0 - Regular',
+        3: '3.0 - Bom',
+        4: '4.0 - Muito Bom',
+        5: '5.0 - Excelente'
+      };
+      document.getElementById('star-rating-label').innerText = labels[stars] || `${stars}.0`;
+    }
+
+    // REVIEW MODAL
+    function openReviewModal(techName, techId) {
+      lockBackgroundScroll();
+      document.getElementById('review-tech-title').innerText = techName;
+      document.getElementById('review-tech-name').value = techName;
+      document.getElementById('review-tech-id').value = techId || '';
+      setStarRating(5);
+
+      updateClientUI();
+      const m = document.getElementById('review-modal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+
+    function closeReviewModal() {
+      const m = document.getElementById('review-modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+      unlockBackgroundScroll();
+    }
+
+    async function handleReviewSubmit(e) {
+      e.preventDefault();
+      let client = getStoredClient();
+
+      if (!client || !client.name) {
+        const inputName = document.getElementById('review-input-name').value.trim();
+        const inputContact = document.getElementById('review-input-contact').value.trim();
+        const inputCep = document.getElementById('review-input-cep') ? document.getElementById('review-input-cep').value.trim() : '';
+        const inputBairro = document.getElementById('review-input-bairro').value.trim();
+
+        if (!inputName) {
+          alert('Por favor, informe seu nome para registrar a avaliação como cliente.');
+          return;
+        }
+
+        client = { name: inputName, contact: inputContact, cep: inputCep, bairro: inputBairro };
+        saveClient(client);
+      }
+
+      const techName = document.getElementById('review-tech-name').value;
+      const techId = document.getElementById('review-tech-id').value;
+      const rating = Number(document.getElementById('review-rating-value').value) || 5;
+      const service = document.getElementById('review-service').value;
+      const comment = document.getElementById('review-comment').value.trim();
+
+      const payload = {
+        techId,
+        techName,
+        clientName: client.name,
+        clientContact: client.contact || '',
+        cep: client.cep || '',
+        bairro: client.bairro || '',
+        service,
+        rating,
+        comment
+      };
+
+      try {
+        await fetch('/api/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.log('Avaliação salva localmente.');
+      }
+
+      closeReviewModal();
+      showToast('Sua avaliação foi enviada com sucesso! Obrigado pelo feedback.', 'star');
+      loadDynamicTechnicians();
+    }
+
+    // BOOKING MODAL & DIRECT WHATSAPP FLOW
+    let currentBookingTech = null;
+
+    const TECH_CONTACTS = {
+      'Matheus Silva': '92998214402',
+      'Carlos Eduardo Mendes': '92987651122',
+      'Juliana Vasconcelos': '92976543344',
+      'Roberto Santos': '92965432211',
+      'Eng. Renato Albuquerque': '92954328899'
+    };
+
+    function getTechWhatsapp(name) {
+      if (TECH_CONTACTS[name]) return TECH_CONTACTS[name];
+      if (typeof technicians !== 'undefined' && Array.isArray(technicians)) {
+        const t = technicians.find(item => item.nome && item.nome.toLowerCase() === name.toLowerCase());
+        if (t && t.whatsapp) return t.whatsapp.replace(/\D/g, '');
+      }
+      return '92998214402';
+    }
+
+    function openRequestModal(name, specialty, whatsapp = '') {
+      lockBackgroundScroll();
+      const phone = (whatsapp ? whatsapp.replace(/\D/g, '') : '') || getTechWhatsapp(name);
+      currentBookingTech = { name, specialty, whatsapp: phone };
+      document.getElementById('modal-sub').innerText = `${name} • ${specialty}`;
+
+      // Default date to tomorrow if empty
+      const dateInput = document.getElementById('booking-date');
+      if (dateInput) {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        const yyyy = tomorrow.getFullYear();
+        const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+        const dd = String(tomorrow.getDate()).padStart(2, '0');
+        if (!dateInput.value) {
+          dateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+        dateInput.min = today.toISOString().split('T')[0];
+      }
+
+      // Pre-fill client neighborhood and CEP if registered
+      const client = getStoredClient();
+      if (client) {
+        if (client.cep && document.getElementById('booking-cep')) {
+          document.getElementById('booking-cep').value = client.cep;
+        }
+        if (client.bairro && document.getElementById('booking-bairro')) {
+          document.getElementById('booking-bairro').value = client.bairro;
+        }
+      }
+
+      const m = document.getElementById('booking-modal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+
+    function closeRequestModal() {
+      const m = document.getElementById('booking-modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+      unlockBackgroundScroll();
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+
+      const service = document.getElementById('booking-service') ? document.getElementById('booking-service').value : 'Higienização';
+      const brand = document.getElementById('booking-brand') ? document.getElementById('booking-brand').value.trim() : '';
+      const capacity = document.getElementById('booking-capacity') ? document.getElementById('booking-capacity').value : '12.000 BTUs';
+      const dateVal = document.getElementById('booking-date') ? document.getElementById('booking-date').value : '';
+      const cep = document.getElementById('booking-cep') ? document.getElementById('booking-cep').value.trim() : '';
+      const bairro = document.getElementById('booking-bairro') ? document.getElementById('booking-bairro').value.trim() : 'Manaus';
+
+      // Format date to Brazilian standard DD/MM/YYYY
+      let formattedDate = dateVal;
+      if (dateVal && dateVal.includes('-')) {
+        const [y, m, d] = dateVal.split('-');
+        formattedDate = `${d}/${m}/${y}`;
+      }
+
+      const techName = currentBookingTech ? currentBookingTech.name : 'Técnico';
+      const rawPhone = currentBookingTech ? currentBookingTech.whatsapp : '92998214402';
+      const cleanPhone = rawPhone.startsWith('55') ? rawPhone : `55${rawPhone}`;
+
+      const aparelhoInfo = brand ? `${brand} (${capacity})` : capacity;
+      const localInfo = cep ? `${bairro}, Manaus (CEP: ${cep})` : `${bairro}, Manaus`;
+
+      const msg = 
+`*ArConnect Climatização* ❄️
+Olá, *${techName}*! Vi seu perfil na plataforma *ArConnect* e gostaria de agendar uma visita técnica:
+
+🛠️ *Serviço:* ${service}
+❄️ *Aparelho:* ${aparelhoInfo}
+📅 *Data Desejada:* ${formattedDate}
+📍 *Local:* ${localInfo}
+
+Podemos confirmar este atendimento?`;
+
+      const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
+
+      closeRequestModal();
+      showToast('Abrindo WhatsApp do profissional...', 'chat');
+      window.open(waUrl, '_blank');
+    }
+
+    function showToast(msg, icon = 'check_circle') {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').innerText = msg;
+      document.getElementById('toast-icon').innerText = icon;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 4000);
+    }
+
+    // FILTER & SEARCH
+    function filterCategory(cat, btn) {
+      document.querySelectorAll('.category-pill').forEach(b => {
+        b.classList.remove('bg-slate-900', 'text-white');
+        b.classList.add('bg-slate-100', 'text-slate-600');
+      });
+      btn.classList.remove('bg-slate-100', 'text-slate-600');
+      btn.classList.add('bg-slate-900', 'text-white');
+
+      document.querySelectorAll('.tech-card').forEach(card => {
+        if (cat === 'todos' || card.dataset.category === cat) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    function filterUrgent(isUrgent) {
+      document.querySelectorAll('.tech-card').forEach(card => {
+        if (!isUrgent || card.dataset.urgent === 'true') {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    function handleSearch(query) {
+      const q = query.toLowerCase();
+      document.querySelectorAll('.tech-card').forEach(card => {
+        const text = card.innerText.toLowerCase();
+        if (text.includes(q)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    function sortCards(type) {
+      const container = document.getElementById('cards-container');
+      const cards = Array.from(container.querySelectorAll('.tech-card'));
+      cards.sort((a, b) => a.innerText.localeCompare(b.innerText));
+      cards.forEach(c => container.appendChild(c));
+    }
+
+    async function loadDynamicTechnicians() {
+      try {
+        const res = await fetch('/api/technicians');
+        if (res.ok) {
+          const list = await res.json();
+          if (list && list.length > 0) {
+            renderDynamicCards(list);
+            return;
+          }
+        }
+      } catch (e) {
+        console.log('Usando lista local');
+      }
+    }
+
+    function renderDynamicCards(list) {
+      const container = document.getElementById('cards-container');
+      container.innerHTML = '';
+      list.forEach(tech => {
+        const card = document.createElement('article');
+        const primaryCat = (tech.categorias && tech.categorias[0]) || 'instalacao';
+        card.className = 'tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5';
+        card.dataset.category = primaryCat;
+        card.dataset.urgent = tech.urgente ? 'true' : 'false';
+
+        card.innerHTML = `
+          <div class="flex items-start gap-3 sm:gap-4">
+            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              src="${tech.foto || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCrD9Q71351UvQUcfyiYUt7RNYQ4sdeNkX2ecTKdjK7K2tQtem0yx_zMAwazOunHpBZ8WIL2fqpXYI9uFD1P8zkilTkgZSgXDB5Bs5H7h-rIn8E7oi7HIsLFl3Ple7Cqt4DWXSWHC3ETcvWLU5Gmf7UNWApTJlfxhuQNVrrDDZpkpcosvM2CS6OPfVdKJBDZm7XKFUlnnZelr24uXWJJKfyMjoVsTYb8LkoHZzlr2Q'}"
+              alt="${tech.nome}"/>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">${tech.nome}</h3>
+                ${tech.verificado ? '<span class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md"><span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> Verificado</span>' : ''}
+              </div>
+              <p class="text-xs text-slate-600 mt-0.5 leading-snug">${tech.especialidade}</p>
+              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+                <span class="flex items-center text-amber-500 font-bold">
+                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> ${tech.avaliacao || '5.0'}
+                </span>
+                <span class="text-slate-300">•</span>
+                <span>${tech.atendimentos || 1} atendimentos</span>
+                <span class="text-slate-300">•</span>
+                <span class="font-medium text-slate-700">${tech.bairro}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              ${tech.urgente ? '<span class="text-[11px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Agenda aberta hoje</span>' : '<span class="text-[11px] sm:text-xs text-slate-500 font-medium">Horários a combinar</span>'}
+              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+            </div>
+            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+              <button type="button" onclick="openReviewModal('${tech.nome.replace(/'/g, "\\'")}', '${tech.id || ''}')"
+                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                title="Avaliar este profissional">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
+                <span>Avaliar</span>
+              </button>
+              <button type="button" onclick="openRequestModal('${tech.nome.replace(/'/g, "\\'")}', '${tech.especialidade.replace(/'/g, "\\'")}', '${(tech.whatsapp || '').replace(/'/g, "\\'")}')"
+                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
+                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                <span>Agendar</span>
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateClientUI();
+      loadDynamicTechnicians();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeRequestModal();
+        closeReviewModal();
+        closeClientAuthModal();
+      }
+    });
+  </script>
+</body>
+
+</html>

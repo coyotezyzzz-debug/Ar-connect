@@ -1,0 +1,18 @@
+{
+  "name": "arconnect-marketplace",
+  "version": "1.0.0",
+  "description": "ArConnect Marketplace - Plataforma de Técnicos de Ar-Condicionado",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "marketplace",
+    "ar-condicionado",
+    "arconnect"
+  ],
+  "author": "",
+  "license": "ISC"
+}
+

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "101",
+    "techId": "1",
+    "techName": "Matheus Silva",
+    "clientName": "Mariana Fagundes",
+    "clientContact": "(92) 98112-3344",
+    "bairro": "Adrianópolis",
+    "service": "Instalação Split Inverter",
+    "rating": 5,
+    "comment": "O Matheus foi impecável. Chegou no horário combinado pelo WhatsApp, fez teste de vácuo com equipamento digital e deixou o apartamento limpo.",
+    "data": "15/11/2024"
+  },
+  {
+    "id": "102",
+    "techId": "2",
+    "techName": "Carlos Eduardo Mendes",
+    "clientName": "Dr. Fernando Siqueira",
+    "clientContact": "(92) 97234-5566",
+    "bairro": "Parque 10",
+    "service": "Higienização & PMOC",
+    "rating": 5,
+    "comment": "Contratamos para a higienização da clínica. Emitiu laudo técnico detalhado e foi extremamente atencioso.",
+    "data": "12/11/2024"
+  },
+  {
+    "id": "103",
+    "techId": "3",
+    "techName": "Juliana Vasconcelos",
+    "clientName": "Camila Rezende",
+    "clientContact": "(92) 99345-6677",
+    "bairro": "Vieiralves",
+    "service": "Recarga de Gás R410A",
+    "rating": 5,
+    "comment": "Juliana encontrou a microfissura na tubulação que dois outros técnicos não acharam. Resolveu rápido!",
+    "data": "10/11/2024"
+  }
+]
