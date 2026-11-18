@@ -4,7 +4,6 @@
   "description": "ArConnect Marketplace - Plataforma de Técnicos de Ar-Condicionado",
   "main": "server.js",
   "scripts": {
-    "build": "node -e \"const fs=require('fs'); ['index.html','encontrar-tecnicos.html','admin.html'].forEach(f => { if(fs.existsSync(f)) fs.copyFileSync(f, 'public/'+f); });\"",
     "start": "node server.js",
     "dev": "node server.js"
   },
