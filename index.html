@@ -1160,7 +1160,10 @@
       if (window.supabase) {
         try {
           const client = window.supabase.createClient('https://cyoimmsnsndqtouezgpg.supabase.co', 'sb_publishable_4Xhddi-Dvw0SYz7neqbgiQ_ZjbAEajg');
-          await client.from('clients').insert(clientObj);
+          const { error: insErr } = await client.from('clients').insert(clientObj);
+          if (insErr && insErr.message && insErr.message.includes('password')) {
+            await client.from('clients').insert({ name, contact, cep, bairro });
+          }
         } catch (err) {
           console.warn('Erro ao salvar cliente no Supabase:', err);
         }
