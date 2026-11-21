@@ -788,19 +788,8 @@
         </button>
       </form>
 
-      <!-- TEST PROFILE SHORTCUT -->
-      <div class="mt-5 pt-4 border-t border-slate-100">
-        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-          <span class="text-[11px] font-bold text-slate-700 block mb-1">Credenciais do Perfil Admin:</span>
-          <p class="text-[11px] text-slate-500 font-mono">E-mail: <strong class="text-slate-800">admin@arconnect.com</strong></p>
-          <p class="text-[11px] text-slate-500 font-mono">Senha: <strong class="text-slate-800">admin2026</strong></p>
-          <button type="button" onclick="fillAdminTestCredentials()" class="mt-2 w-full bg-slate-200 hover:bg-slate-300 text-slate-800 text-[11px] font-semibold py-1.5 rounded-lg transition-colors">
-            ⚡ Preencher Acesso de Teste
-          </button>
-        </div>
-        <div class="text-center mt-3">
-          <a href="/" class="text-xs text-slate-400 hover:text-slate-600 transition-colors">← Voltar para a Plataforma</a>
-        </div>
+      <div class="mt-5 pt-4 border-t border-slate-100 text-center">
+        <a href="/" class="text-xs text-slate-400 hover:text-slate-600 transition-colors">← Voltar para a Plataforma</a>
       </div>
     </div>
   </div>
@@ -837,11 +826,6 @@
         errorMsg.classList.remove('hidden');
         setTimeout(() => errorMsg.classList.add('hidden'), 4000);
       }
-    }
-
-    function fillAdminTestCredentials() {
-      document.getElementById('admin-input-email').value = ADMIN_EMAIL;
-      document.getElementById('admin-input-pass').value = ADMIN_PASS;
     }
 
     function adminLogout() {

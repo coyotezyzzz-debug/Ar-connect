@@ -840,15 +840,6 @@
               <span>Entrar na Minha Conta</span>
             </button>
           </form>
-
-          <!-- TEST CLIENT BUTTON -->
-          <div class="p-3 bg-brand-50/70 border border-brand-200/80 rounded-xl mt-2 text-center">
-            <span class="text-[11px] font-bold text-brand-900 block mb-0.5">Perfil de Teste Rápido:</span>
-            <p class="text-[10px] text-slate-600 mb-2">Carlos Augusto • Adrianópolis, Manaus</p>
-            <button type="button" onclick="loginAsTestClient()" class="w-full bg-white hover:bg-slate-50 text-brand-700 border border-brand-300 text-xs font-bold py-2 rounded-lg transition-all shadow-xs flex items-center justify-center gap-1">
-              <span>⚡ Entrar como Carlos Augusto (Teste)</span>
-            </button>
-          </div>
         </div>
 
         <!-- TAB 2: REGISTER -->
@@ -1029,13 +1020,6 @@
       }
     }
 
-    const TEST_CLIENT = {
-      name: 'Carlos Augusto (Cliente Teste)',
-      contact: '(92) 99123-4567',
-      cep: '69057-000',
-      bairro: 'Adrianópolis'
-    };
-
     function switchClientTab(tab) {
       const isLogin = tab === 'login';
       const btnLogin = document.getElementById('tab-btn-login');
@@ -1058,22 +1042,10 @@
       }
     }
 
-    function loginAsTestClient() {
-      saveClient(TEST_CLIENT);
-      closeClientAuthModal();
-      showToast('Conectado como Carlos Augusto (Cliente Teste)!', 'person');
-    }
-
     async function handleClientLogin(e) {
       e.preventDefault();
       const input = document.getElementById('login-client-contact').value.trim();
       if (!input) return;
-
-      const clean = input.replace(/\D/g, '');
-      if (clean === '92991234567' || input.toLowerCase().includes('carlos') || input.toLowerCase().includes('teste')) {
-        loginAsTestClient();
-        return;
-      }
 
       let found = null;
       if (window.supabase) {
@@ -1098,15 +1070,22 @@
         closeClientAuthModal();
         showToast(`Bem-vindo de volta, ${found.name.split(' ')[0]}!`, 'person');
       } else {
-        const fallbackClient = {
-          name: input.includes('@') ? input.split('@')[0] : 'Cliente ArConnect',
-          contact: input,
-          cep: '69000-000',
-          bairro: 'Manaus'
-        };
-        saveClient(fallbackClient);
-        closeClientAuthModal();
-        showToast(`Conectado como ${fallbackClient.contact}!`, 'person');
+        const stored = getStoredClient();
+        if (stored && (stored.contact === input || stored.name.toLowerCase() === input.toLowerCase())) {
+          saveClient(stored);
+          closeClientAuthModal();
+          showToast(`Bem-vindo de volta, ${stored.name.split(' ')[0]}!`, 'person');
+        } else {
+          const fallbackClient = {
+            name: input.includes('@') ? input.split('@')[0] : 'Cliente ArConnect',
+            contact: input,
+            cep: '69000-000',
+            bairro: 'Manaus'
+          };
+          saveClient(fallbackClient);
+          closeClientAuthModal();
+          showToast(`Conectado como ${fallbackClient.contact}!`, 'person');
+        }
       }
     }
 
