@@ -1089,6 +1089,17 @@
 
       if (errBox) errBox.classList.add('hidden');
 
+      // Reconhecimento de Administrador via WhatsApp
+      const cleanDigits = input.replace(/\D/g, '');
+      const isAdmPhone = cleanDigits === '9274005948' || cleanDigits === '92974005948' || cleanDigits.endsWith('74005948') || cleanDigits.endsWith('974005948');
+      if (isAdmPhone && pass === 'admin2026') {
+        sessionStorage.setItem('arconnect_admin_auth', 'true');
+        showToast('Acesso de Administrador reconhecido! Abrindo Painel...');
+        closeClientAuthModal();
+        setTimeout(() => { window.location.href = '/admin'; }, 600);
+        return;
+      }
+
       let found = null;
       if (window.supabase) {
         try {
