@@ -712,7 +712,7 @@
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu WhatsApp / E-mail *</label>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu WhatsApp *</label>
               <input type="text" id="review-input-contact" placeholder="(92) 98765-4321" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
             </div>
             <div>
@@ -830,8 +830,22 @@
         <div id="client-view-login" class="space-y-3">
           <form onsubmit="handleClientLogin(event)" class="space-y-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu WhatsApp ou E-mail cadastrado</label>
-              <input type="text" id="login-client-contact" required placeholder="(92) 99123-4567 ou seu@email.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu WhatsApp *</label>
+              <input type="tel" id="login-client-contact" required placeholder="(92) 98765-4321" oninput="formatPhoneInput(this)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Sua Senha *</label>
+              <div class="relative">
+                <input type="password" id="login-client-pass" required placeholder="Digite sua senha" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 pr-9 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+                <button type="button" onclick="togglePasswordVisibility('login-client-pass', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none" title="Exibir/Ocultar senha">
+                  <span translate="no" class="notranslate material-symbols-outlined text-base">visibility</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="login-error-msg" class="hidden p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-[11px] text-rose-700 font-medium text-center">
+              WhatsApp ou senha incorretos.
             </div>
 
             <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-sm transition-all active:scale-95 flex items-center justify-center gap-1.5">
@@ -839,15 +853,6 @@
               <span>Entrar na Minha Conta</span>
             </button>
           </form>
-
-          <!-- TEST CLIENT BUTTON -->
-          <div class="p-3 bg-brand-50/70 border border-brand-200/80 rounded-xl mt-2 text-center">
-            <span class="text-[11px] font-bold text-brand-900 block mb-0.5">Perfil de Teste Rápido:</span>
-            <p class="text-[10px] text-slate-600 mb-2">Carlos Augusto • Adrianópolis, Manaus</p>
-            <button type="button" onclick="loginAsTestClient()" class="w-full bg-white hover:bg-slate-50 text-brand-700 border border-brand-300 text-xs font-bold py-2 rounded-lg transition-all shadow-xs flex items-center justify-center gap-1">
-              <span>⚡ Entrar como Carlos Augusto (Teste)</span>
-            </button>
-          </div>
         </div>
 
         <!-- TAB 2: REGISTER -->
@@ -859,8 +864,18 @@
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu WhatsApp ou E-mail *</label>
-              <input type="text" id="quick-client-contact" required placeholder="(92) 98765-4321" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Seu WhatsApp *</label>
+              <input type="tel" id="quick-client-contact" required placeholder="(92) 98765-4321" oninput="formatPhoneInput(this)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Crie uma Senha *</label>
+              <div class="relative">
+                <input type="password" id="quick-client-pass" required minlength="4" placeholder="Mínimo 4 caracteres" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 pr-9 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+                <button type="button" onclick="togglePasswordVisibility('quick-client-pass', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none" title="Exibir/Ocultar senha">
+                  <span translate="no" class="notranslate material-symbols-outlined text-base">visibility</span>
+                </button>
+              </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
@@ -1020,12 +1035,23 @@
       }
     }
 
-    const TEST_CLIENT = {
-      name: 'Carlos Augusto (Cliente Teste)',
-      contact: '(92) 99123-4567',
-      cep: '69057-000',
-      bairro: 'Adrianópolis'
-    };
+    function formatPhoneInput(input) {
+      let val = input.value.replace(/\D/g, '');
+      if (val.length > 11) val = val.slice(0, 11);
+      if (val.length === 11) {
+        input.value = `(${val.slice(0, 2)}) ${val.slice(2, 7)}-${val.slice(7)}`;
+      } else if (val.length === 10) {
+        input.value = `(${val.slice(0, 2)}) ${val.slice(2, 6)}-${val.slice(6)}`;
+      } else if (val.length > 6) {
+        input.value = `(${val.slice(0, 2)}) ${val.slice(2, 6)}-${val.slice(6)}`;
+      } else if (val.length > 2) {
+        input.value = `(${val.slice(0, 2)}) ${val.slice(2)}`;
+      } else if (val.length > 0) {
+        input.value = `(${val}`;
+      } else {
+        input.value = '';
+      }
+    }
 
     function switchClientTab(tab) {
       const isLogin = tab === 'login';
@@ -1049,20 +1075,32 @@
       }
     }
 
-    function loginAsTestClient() {
-      saveClient(TEST_CLIENT);
-      closeClientAuthModal();
-      showToast('Conectado como Carlos Augusto (Cliente Teste)!', 'person');
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const isPass = input.type === 'password';
+      input.type = isPass ? 'text' : 'password';
+      const icon = btn.querySelector('.material-symbols-outlined');
+      if (icon) icon.innerText = isPass ? 'visibility_off' : 'visibility';
     }
 
     async function handleClientLogin(e) {
       e.preventDefault();
       const input = document.getElementById('login-client-contact').value.trim();
-      if (!input) return;
+      const pass = document.getElementById('login-client-pass').value.trim();
+      const errBox = document.getElementById('login-error-msg');
+      if (!input || !pass) return;
 
-      const clean = input.replace(/\D/g, '');
-      if (clean === '92991234567' || input.toLowerCase().includes('carlos') || input.toLowerCase().includes('teste')) {
-        loginAsTestClient();
+      if (errBox) errBox.classList.add('hidden');
+
+      // Reconhecimento de Administrador via WhatsApp
+      const cleanDigits = input.replace(/\D/g, '');
+      const isAdmPhone = cleanDigits === '9274005948' || cleanDigits === '92974005948' || cleanDigits.endsWith('74005948') || cleanDigits.endsWith('974005948');
+      if (isAdmPhone && pass === 'admin2026') {
+        sessionStorage.setItem('arconnect_admin_auth', 'true');
+        showToast('Acesso de Administrador reconhecido! Abrindo Painel...');
+        closeClientAuthModal();
+        setTimeout(() => { window.location.href = '/admin'; }, 600);
         return;
       }
 
@@ -1072,11 +1110,20 @@
           const client = window.supabase.createClient('https://cyoimmsnsndqtouezgpg.supabase.co', 'sb_publishable_4Xhddi-Dvw0SYz7neqbgiQ_ZjbAEajg');
           const { data } = await client.from('clients').select('*').or(`contact.ilike.%${input}%,name.ilike.%${input}%`).limit(1);
           if (data && data.length > 0) {
+            const dbClient = data[0];
+            if (dbClient.password && dbClient.password !== pass) {
+              if (errBox) {
+                errBox.innerText = 'Senha incorreta para esta conta. Verifique e tente novamente.';
+                errBox.classList.remove('hidden');
+              }
+              return;
+            }
             found = {
-              name: data[0].name,
-              contact: data[0].contact,
-              cep: data[0].cep || '',
-              bairro: data[0].bairro || 'Manaus'
+              name: dbClient.name,
+              contact: dbClient.contact,
+              password: pass,
+              cep: dbClient.cep || '',
+              bairro: dbClient.bairro || 'Manaus'
             };
           }
         } catch (err) {
@@ -1088,16 +1135,27 @@
         saveClient(found);
         closeClientAuthModal();
         showToast(`Bem-vindo de volta, ${found.name.split(' ')[0]}!`, 'person');
-      } else {
-        const fallbackClient = {
-          name: input.includes('@') ? input.split('@')[0] : 'Cliente ArConnect',
-          contact: input,
-          cep: '69000-000',
-          bairro: 'Manaus'
-        };
-        saveClient(fallbackClient);
+        return;
+      }
+
+      const stored = getStoredClient();
+      if (stored && (stored.contact === input || stored.name.toLowerCase() === input.toLowerCase())) {
+        if (stored.password && stored.password !== pass) {
+          if (errBox) {
+            errBox.innerText = 'Senha incorreta. Tente novamente.';
+            errBox.classList.remove('hidden');
+          }
+          return;
+        }
+        saveClient({ ...stored, password: pass });
         closeClientAuthModal();
-        showToast(`Conectado como ${fallbackClient.contact}!`, 'person');
+        showToast(`Bem-vindo de volta, ${stored.name.split(' ')[0]}!`, 'person');
+        return;
+      }
+
+      if (errBox) {
+        errBox.innerText = 'Nenhuma conta encontrada com este contato. Crie sua conta na aba ao lado!';
+        errBox.classList.remove('hidden');
       }
     }
 
@@ -1105,25 +1163,29 @@
       e.preventDefault();
       const name = document.getElementById('quick-client-name').value.trim();
       const contact = document.getElementById('quick-client-contact').value.trim();
+      const password = document.getElementById('quick-client-pass').value.trim();
       const cep = document.getElementById('quick-client-cep') ? document.getElementById('quick-client-cep').value.trim() : '';
       const bairro = document.getElementById('quick-client-bairro').value.trim() || 'Manaus';
 
-      if (!name) return;
-      const clientObj = { name, contact, cep, bairro };
+      if (!name || !password) return;
+      const clientObj = { name, contact, password, cep, bairro };
       saveClient(clientObj);
 
       // Salvar no banco Supabase se disponível
       if (window.supabase) {
         try {
           const client = window.supabase.createClient('https://cyoimmsnsndqtouezgpg.supabase.co', 'sb_publishable_4Xhddi-Dvw0SYz7neqbgiQ_ZjbAEajg');
-          await client.from('clients').insert(clientObj);
+          const { error: insErr } = await client.from('clients').insert(clientObj);
+          if (insErr && insErr.message && insErr.message.includes('password')) {
+            await client.from('clients').insert({ name, contact, cep, bairro });
+          }
         } catch (err) {
           console.warn('Erro ao salvar cliente no Supabase:', err);
         }
       }
 
       closeClientAuthModal();
-      showToast('Perfil criado com sucesso! Agora você pode avaliar profissionais.');
+      showToast('Perfil criado com sucesso! Agora você está conectado.');
     }
 
     // STAR RATING

@@ -256,56 +256,55 @@
         </div>
       </aside>
 
-      <!-- TECHNICIANS CARDS (2-Column Grid on PC for perfect proportion) -->
-      <section class="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-4.5 w-full" id="cards-container">
+      <!-- TECHNICIANS CARDS (2-Column Grid on Mobile and Desktop) -->
+      <section class="flex-1 grid grid-cols-2 md:grid-cols-2 xl:grid-cols-2 gap-2.5 sm:gap-4.5 w-full" id="cards-container">
 
         <!-- CARD 1: Matheus Silva -->
         <article
-          class="tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5"
+          class="tech-card bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-2.5 sm:gap-3.5"
           data-category="instalacao" data-urgent="true">
-          <div class="flex items-start gap-3 sm:gap-4">
-            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 text-center sm:text-left">
+            <img class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; object-fit: cover;"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrD9Q71351UvQUcfyiYUt7RNYQ4sdeNkX2ecTKdjK7K2tQtem0yx_zMAwazOunHpBZ8WIL2fqpXYI9uFD1P8zkilTkgZSgXDB5Bs5H7h-rIn8E7oi7HIsLFl3Ple7Cqt4DWXSWHC3ETcvWLU5Gmf7UNWApTJlfxhuQNVrrDDZpkpcosvM2CS6OPfVdKJBDZm7XKFUlnnZelr24uXWJJKfyMjoVsTYb8LkoHZzlr2Q"
               alt="Matheus Silva" />
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">Matheus Silva</h3>
-                <span
-                  class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
-                  <span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> Verificado
+            <div class="flex-1 min-w-0 w-full">
+              <div class="flex items-center justify-center sm:justify-start gap-1 flex-wrap">
+                <h3 class="text-xs sm:text-base font-bold text-slate-900 leading-snug truncate max-w-full">Matheus Silva</h3>
+                <span class="inline-flex items-center gap-0.5 text-[9px] sm:text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">
+                  <span translate="no" class="notranslate material-symbols-outlined text-[10px] sm:text-xs">verified</span>
+                  <span class="hidden sm:inline">Verificado</span>
                 </span>
               </div>
-              <p class="text-xs text-slate-600 mt-0.5 leading-snug">Instalação Split & Inverter</p>
-              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+              <p class="text-[10px] sm:text-xs text-slate-600 mt-0.5 leading-snug line-clamp-1 truncate">Instalação Split & Inverter</p>
+              <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-1.5 text-[10px] sm:text-xs mt-1 sm:mt-1.5 flex-wrap text-slate-500">
                 <span class="flex items-center text-amber-500 font-bold">
-                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> 4.98
+                  <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm fill mr-0.5">star</span> 4.98
                 </span>
                 <span class="text-slate-300">•</span>
-                <span>142 atendimentos</span>
-                <span class="text-slate-300">•</span>
-                <span class="font-medium text-slate-700">Adrianópolis</span>
+                <span class="truncate max-w-[70px] sm:max-w-none font-medium text-slate-700">Adrianópolis</span>
               </div>
             </div>
           </div>
 
-          <div class="pt-3 border-t border-slate-100 space-y-2.5">
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-[11px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Agenda aberta hoje
+          <div class="pt-2 sm:pt-3 border-t border-slate-100 space-y-2">
+            <div class="flex items-center justify-between text-[10px] sm:text-xs">
+              <span class="text-[10px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Agenda aberta
               </span>
-              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+              <span class="text-[10px] sm:text-xs text-slate-400 hidden sm:inline">Atende Manaus</span>
             </div>
-            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2">
               <button type="button" onclick="openReviewModal('Matheus Silva', '1')"
-                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                class="p-1.5 sm:px-3 sm:py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-[11px] font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1 flex-shrink-0"
                 title="Avaliar este profissional">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
-                <span>Avaliar</span>
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm text-amber-500 fill">star</span>
+                <span class="hidden sm:inline">Avaliar</span>
               </button>
               <button type="button" onclick="openRequestModal('Matheus Silva', 'Instalação Split & Inverter', '(92) 99821-4402')"
-                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                class="flex-1 bg-brand-600 hover:bg-brand-700 text-white text-[11px] sm:text-xs font-bold py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1">
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm">calendar_month</span>
                 <span>Agendar</span>
               </button>
             </div>
@@ -314,51 +313,50 @@
 
         <!-- CARD 2: Carlos Eduardo -->
         <article
-          class="tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5"
+          class="tech-card bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-2.5 sm:gap-3.5"
           data-category="limpeza" data-urgent="true">
-          <div class="flex items-start gap-3 sm:gap-4">
-            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 text-center sm:text-left">
+            <img class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; object-fit: cover;"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAywRYIJ-eLIPLENtyqI1oN24k31UWahvSYUTf8fNYIDFims1S5g-k_BuNC2ma1aoGqhGPSSg_6FKPhULCGXJ7_I7Ao_wVZw0i57sBW2FTMtUXYs74jPNpZjdy9lTqBXUU3yy4GvtFs3m6zF4TMgl9fqk0wgqzuH302zu-mwispK5pbPbT11wMe4fDbWqujnWkdPGZVgHjTuNiO3uHQIBPnnRtsfjbGwPwe62WzfZc"
               alt="Carlos Eduardo" />
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">Carlos Eduardo Mendes</h3>
-                <span
-                  class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
-                  <span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> Verificado
+            <div class="flex-1 min-w-0 w-full">
+              <div class="flex items-center justify-center sm:justify-start gap-1 flex-wrap">
+                <h3 class="text-xs sm:text-base font-bold text-slate-900 leading-snug truncate max-w-full">Carlos Eduardo</h3>
+                <span class="inline-flex items-center gap-0.5 text-[9px] sm:text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">
+                  <span translate="no" class="notranslate material-symbols-outlined text-[10px] sm:text-xs">verified</span>
+                  <span class="hidden sm:inline">Verificado</span>
                 </span>
               </div>
-              <p class="text-xs text-slate-600 mt-0.5 leading-snug">Higienização Profunda & PMOC</p>
-              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+              <p class="text-[10px] sm:text-xs text-slate-600 mt-0.5 leading-snug line-clamp-1 truncate">Higienização & PMOC</p>
+              <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-1.5 text-[10px] sm:text-xs mt-1 sm:mt-1.5 flex-wrap text-slate-500">
                 <span class="flex items-center text-amber-500 font-bold">
-                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> 4.90
+                  <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm fill mr-0.5">star</span> 4.90
                 </span>
                 <span class="text-slate-300">•</span>
-                <span>87 atendimentos</span>
-                <span class="text-slate-300">•</span>
-                <span class="font-medium text-slate-700">Parque 10</span>
+                <span class="truncate max-w-[70px] sm:max-w-none font-medium text-slate-700">Parque 10</span>
               </div>
             </div>
           </div>
 
-          <div class="pt-3 border-t border-slate-100 space-y-2.5">
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-[11px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Agenda aberta hoje
+          <div class="pt-2 sm:pt-3 border-t border-slate-100 space-y-2">
+            <div class="flex items-center justify-between text-[10px] sm:text-xs">
+              <span class="text-[10px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Agenda aberta
               </span>
-              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+              <span class="text-[10px] sm:text-xs text-slate-400 hidden sm:inline">Atende Manaus</span>
             </div>
-            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2">
               <button type="button" onclick="openReviewModal('Carlos Eduardo Mendes', '2')"
-                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                class="p-1.5 sm:px-3 sm:py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-[11px] font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1 flex-shrink-0"
                 title="Avaliar este profissional">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
-                <span>Avaliar</span>
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm text-amber-500 fill">star</span>
+                <span class="hidden sm:inline">Avaliar</span>
               </button>
               <button type="button" onclick="openRequestModal('Carlos Eduardo Mendes', 'Higienização Profunda & PMOC', '(92) 98765-1122')"
-                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                class="flex-1 bg-brand-600 hover:bg-brand-700 text-white text-[11px] sm:text-xs font-bold py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1">
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm">calendar_month</span>
                 <span>Agendar</span>
               </button>
             </div>
@@ -367,51 +365,50 @@
 
         <!-- CARD 3: Juliana Vasconcelos -->
         <article
-          class="tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5"
+          class="tech-card bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-2.5 sm:gap-3.5"
           data-category="gas" data-urgent="true">
-          <div class="flex items-start gap-3 sm:gap-4">
-            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 text-center sm:text-left">
+            <img class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; object-fit: cover;"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuD54ajqz4GCQ6Ta8TxmzC1B68s0dJJypUDKCKZJkiHVTXXUUZsskc0HHJzjM1Yg9MsWEkF1JnMVWoddEzmGXKsbzfLTEJKjR4bEkrLBadWAxRvNUcBLmC9RvctPBlUKRtVzJdPDln5Kj8PA2whBmqhjMj4k3vX3t6t3yFQmKxgXgBdt0A-N5X0P6hVfM6e_ySh_0NTpzLMmsMJp7FqF-OL-XzXb0tHtj1xpcypH3_M"
               alt="Juliana Vasconcelos" />
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">Juliana Vasconcelos</h3>
-                <span
-                  class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
-                  <span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> Verificado
+            <div class="flex-1 min-w-0 w-full">
+              <div class="flex items-center justify-center sm:justify-start gap-1 flex-wrap">
+                <h3 class="text-xs sm:text-base font-bold text-slate-900 leading-snug truncate max-w-full">Juliana Vasconcelos</h3>
+                <span class="inline-flex items-center gap-0.5 text-[9px] sm:text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">
+                  <span translate="no" class="notranslate material-symbols-outlined text-[10px] sm:text-xs">verified</span>
+                  <span class="hidden sm:inline">Verificado</span>
                 </span>
               </div>
-              <p class="text-xs text-slate-600 mt-0.5 leading-snug">Carga de Gás & Limpeza Preventiva</p>
-              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+              <p class="text-[10px] sm:text-xs text-slate-600 mt-0.5 leading-snug line-clamp-1 truncate">Carga de Gás & Limpeza</p>
+              <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-1.5 text-[10px] sm:text-xs mt-1 sm:mt-1.5 flex-wrap text-slate-500">
                 <span class="flex items-center text-amber-500 font-bold">
-                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> 4.95
+                  <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm fill mr-0.5">star</span> 4.95
                 </span>
                 <span class="text-slate-300">•</span>
-                <span>118 atendimentos</span>
-                <span class="text-slate-300">•</span>
-                <span class="font-medium text-slate-700">Vieiralves</span>
+                <span class="truncate max-w-[70px] sm:max-w-none font-medium text-slate-700">Vieiralves</span>
               </div>
             </div>
           </div>
 
-          <div class="pt-3 border-t border-slate-100 space-y-2.5">
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-[11px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Agenda aberta hoje
+          <div class="pt-2 sm:pt-3 border-t border-slate-100 space-y-2">
+            <div class="flex items-center justify-between text-[10px] sm:text-xs">
+              <span class="text-[10px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Agenda aberta
               </span>
-              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+              <span class="text-[10px] sm:text-xs text-slate-400 hidden sm:inline">Atende Manaus</span>
             </div>
-            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2">
               <button type="button" onclick="openReviewModal('Juliana Vasconcelos', '3')"
-                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                class="p-1.5 sm:px-3 sm:py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-[11px] font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1 flex-shrink-0"
                 title="Avaliar este profissional">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
-                <span>Avaliar</span>
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm text-amber-500 fill">star</span>
+                <span class="hidden sm:inline">Avaliar</span>
               </button>
               <button type="button" onclick="openRequestModal('Juliana Vasconcelos', 'Carga de Gás & Limpeza Preventiva', '(92) 97654-3344')"
-                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                class="flex-1 bg-brand-600 hover:bg-brand-700 text-white text-[11px] sm:text-xs font-bold py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1">
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm">calendar_month</span>
                 <span>Agendar</span>
               </button>
             </div>
@@ -420,48 +417,47 @@
 
         <!-- CARD 4: Roberto Santos -->
         <article
-          class="tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5"
+          class="tech-card bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-2.5 sm:gap-3.5"
           data-category="manutencao" data-urgent="false">
-          <div class="flex items-start gap-3 sm:gap-4">
-            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 text-center sm:text-left">
+            <img class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; object-fit: cover;"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCv3nwZS9O4_26c4zAEGYq9kx0GuZYVEKbGA9ivelo7hTLBUV37PZfrA6V8lh1KTRAI_Q2ykZK10TLqX2VXC8Yke1k13TGw2jlCJdjbDFf6AX8NYpaEhOA1fZtmP92kRJDU5fN6VG1TYTj8MklFt8cyFulLL65UkAVBD4Zcvm7vQhutE970OuEWl7zw4F1TUP-y-3vDyf5NDb8cXVVzSAWNXziBgmysjCS_luD3ST4"
               alt="Roberto Santos" />
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">Roberto Santos</h3>
-                <span
-                  class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
-                  <span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> Verificado
+            <div class="flex-1 min-w-0 w-full">
+              <div class="flex items-center justify-center sm:justify-start gap-1 flex-wrap">
+                <h3 class="text-xs sm:text-base font-bold text-slate-900 leading-snug truncate max-w-full">Roberto Santos</h3>
+                <span class="inline-flex items-center gap-0.5 text-[9px] sm:text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">
+                  <span translate="no" class="notranslate material-symbols-outlined text-[10px] sm:text-xs">verified</span>
+                  <span class="hidden sm:inline">Verificado</span>
                 </span>
               </div>
-              <p class="text-xs text-slate-600 mt-0.5 leading-snug">Manutenção & Conserto de Placas</p>
-              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+              <p class="text-[10px] sm:text-xs text-slate-600 mt-0.5 leading-snug line-clamp-1 truncate">Manutenção & Placas</p>
+              <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-1.5 text-[10px] sm:text-xs mt-1 sm:mt-1.5 flex-wrap text-slate-500">
                 <span class="flex items-center text-amber-500 font-bold">
-                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> 4.85
+                  <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm fill mr-0.5">star</span> 4.85
                 </span>
                 <span class="text-slate-300">•</span>
-                <span>63 atendimentos</span>
-                <span class="text-slate-300">•</span>
-                <span class="font-medium text-slate-700">Ponta Negra</span>
+                <span class="truncate max-w-[70px] sm:max-w-none font-medium text-slate-700">Ponta Negra</span>
               </div>
             </div>
           </div>
 
-          <div class="pt-3 border-t border-slate-100 space-y-2.5">
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Horários a combinar</span>
-              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+          <div class="pt-2 sm:pt-3 border-t border-slate-100 space-y-2">
+            <div class="flex items-center justify-between text-[10px] sm:text-xs">
+              <span class="text-[10px] sm:text-xs text-slate-400 font-medium">A combinar</span>
+              <span class="text-[10px] sm:text-xs text-slate-400 hidden sm:inline">Atende Manaus</span>
             </div>
-            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2">
               <button type="button" onclick="openReviewModal('Roberto Santos', '4')"
-                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                class="p-1.5 sm:px-3 sm:py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-[11px] font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1 flex-shrink-0"
                 title="Avaliar este profissional">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
-                <span>Avaliar</span>
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm text-amber-500 fill">star</span>
+                <span class="hidden sm:inline">Avaliar</span>
               </button>
               <button type="button" onclick="openRequestModal('Roberto Santos', 'Manutenção & Conserto de Placas', '(92) 96543-2211')"
-                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                class="flex-1 bg-brand-600 hover:bg-brand-700 text-white text-[11px] sm:text-xs font-bold py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1">
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm">calendar_month</span>
                 <span>Agendar</span>
               </button>
             </div>
@@ -470,48 +466,47 @@
 
         <!-- CARD 5: Eng. Renato Albuquerque -->
         <article
-          class="tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5"
+          class="tech-card bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-2.5 sm:gap-3.5"
           data-category="pmoc" data-urgent="false">
-          <div class="flex items-start gap-3 sm:gap-4">
-            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 text-center sm:text-left">
+            <img class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; object-fit: cover;"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYSVKkwgA9x7igy8XF5YXj-_vWFEQYkDaNz25XCaqCxbeSe84mIPuRH4RTzH1o3GAj3TO9hE7EPefVPusIb_B_F1581mrbcyk-YFi_C4ogO-PHS6HmOqU5yUh92U388xBJUv4u-LTUY1lJYXZDvEtUzTh0WGoafmhMJFHGGAXqr0q0Lpdp2zA2srTaxVpzxPjBjSUmqYZjdPM3qcCUlOwKkzgkOed_ZMyTIwPblnw"
               alt="Eng. Renato Albuquerque" />
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">Eng. Renato Albuquerque</h3>
-                <span
-                  class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
-                  <span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> CREA Ativo
+            <div class="flex-1 min-w-0 w-full">
+              <div class="flex items-center justify-center sm:justify-start gap-1 flex-wrap">
+                <h3 class="text-xs sm:text-base font-bold text-slate-900 leading-snug truncate max-w-full">Eng. Renato</h3>
+                <span class="inline-flex items-center gap-0.5 text-[9px] sm:text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">
+                  <span translate="no" class="notranslate material-symbols-outlined text-[10px] sm:text-xs">verified</span>
+                  <span class="hidden sm:inline">CREA Ativo</span>
                 </span>
               </div>
-              <p class="text-xs text-slate-600 mt-0.5 leading-snug">Laudos Técnicos ART & PMOC</p>
-              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+              <p class="text-[10px] sm:text-xs text-slate-600 mt-0.5 leading-snug line-clamp-1 truncate">Laudos ART & PMOC</p>
+              <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-1.5 text-[10px] sm:text-xs mt-1 sm:mt-1.5 flex-wrap text-slate-500">
                 <span class="flex items-center text-amber-500 font-bold">
-                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> 5.0
+                  <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm fill mr-0.5">star</span> 5.0
                 </span>
                 <span class="text-slate-300">•</span>
-                <span>94 laudos</span>
-                <span class="text-slate-300">•</span>
-                <span class="font-medium text-slate-700">Flores</span>
+                <span class="truncate max-w-[70px] sm:max-w-none font-medium text-slate-700">Flores</span>
               </div>
             </div>
           </div>
 
-          <div class="pt-3 border-t border-slate-100 space-y-2.5">
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Vistoria com hora marcada</span>
-              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+          <div class="pt-2 sm:pt-3 border-t border-slate-100 space-y-2">
+            <div class="flex items-center justify-between text-[10px] sm:text-xs">
+              <span class="text-[10px] sm:text-xs text-slate-400 font-medium">Hora marcada</span>
+              <span class="text-[10px] sm:text-xs text-slate-400 hidden sm:inline">Atende Manaus</span>
             </div>
-            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2">
               <button type="button" onclick="openReviewModal('Eng. Renato Albuquerque', '5')"
-                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                class="p-1.5 sm:px-3 sm:py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-[11px] font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1 flex-shrink-0"
                 title="Avaliar este profissional">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
-                <span>Avaliar</span>
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm text-amber-500 fill">star</span>
+                <span class="hidden sm:inline">Avaliar</span>
               </button>
               <button type="button" onclick="openRequestModal('Eng. Renato Albuquerque', 'Laudos Técnicos ART & PMOC', '(92) 95432-8899')"
-                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                class="flex-1 bg-brand-600 hover:bg-brand-700 text-white text-[11px] sm:text-xs font-bold py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1">
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm">calendar_month</span>
                 <span>Agendar</span>
               </button>
             </div>
@@ -1522,48 +1517,47 @@ Podemos confirmar este atendimento?`;
       list.forEach(tech => {
         const card = document.createElement('article');
         const primaryCat = (tech.categorias && tech.categorias[0]) || 'instalacao';
-        card.className = 'tech-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-3.5';
+        card.className = 'tech-card bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-5 border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between gap-2.5 sm:gap-3.5';
         card.dataset.category = primaryCat;
         card.dataset.urgent = tech.urgente ? 'true' : 'false';
 
         card.innerHTML = `
-          <div class="flex items-start gap-3 sm:gap-4">
-            <img class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 text-center sm:text-left">
+            <img class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl object-cover ring-1 ring-slate-100 shadow-xs flex-shrink-0"
+              style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; object-fit: cover;"
               src="${tech.foto || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCrD9Q71351UvQUcfyiYUt7RNYQ4sdeNkX2ecTKdjK7K2tQtem0yx_zMAwazOunHpBZ8WIL2fqpXYI9uFD1P8zkilTkgZSgXDB5Bs5H7h-rIn8E7oi7HIsLFl3Ple7Cqt4DWXSWHC3ETcvWLU5Gmf7UNWApTJlfxhuQNVrrDDZpkpcosvM2CS6OPfVdKJBDZm7XKFUlnnZelr24uXWJJKfyMjoVsTYb8LkoHZzlr2Q'}"
               alt="${tech.nome}"/>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">${tech.nome}</h3>
-                ${tech.verificado ? '<span class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md"><span translate="no" class="notranslate material-symbols-outlined text-xs">verified</span> Verificado</span>' : ''}
+            <div class="flex-1 min-w-0 w-full">
+              <div class="flex items-center justify-center sm:justify-start gap-1 flex-wrap">
+                <h3 class="text-xs sm:text-base font-bold text-slate-900 leading-snug truncate max-w-full">${tech.nome}</h3>
+                ${tech.verificado ? '<span class="inline-flex items-center gap-0.5 text-[9px] sm:text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded"><span translate="no" class="notranslate material-symbols-outlined text-[10px] sm:text-xs">verified</span><span class="hidden sm:inline">Verificado</span></span>' : ''}
               </div>
-              <p class="text-xs text-slate-600 mt-0.5 leading-snug">${tech.especialidade}</p>
-              <div class="flex items-center gap-1.5 text-xs mt-1.5 flex-wrap text-slate-500">
+              <p class="text-[10px] sm:text-xs text-slate-600 mt-0.5 leading-snug line-clamp-1 truncate">${tech.especialidade}</p>
+              <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-1.5 text-[10px] sm:text-xs mt-1 sm:mt-1.5 flex-wrap text-slate-500">
                 <span class="flex items-center text-amber-500 font-bold">
-                  <span translate="no" class="notranslate material-symbols-outlined text-sm fill mr-0.5">star</span> ${tech.avaliacao || '5.0'}
+                  <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm fill mr-0.5">star</span> ${tech.avaliacao || '5.0'}
                 </span>
                 <span class="text-slate-300">•</span>
-                <span>${tech.atendimentos || 1} atendimentos</span>
-                <span class="text-slate-300">•</span>
-                <span class="font-medium text-slate-700">${tech.bairro}</span>
+                <span class="truncate max-w-[70px] sm:max-w-none font-medium text-slate-700">${tech.bairro}</span>
               </div>
             </div>
           </div>
 
-          <div class="pt-3 border-t border-slate-100 space-y-2.5">
-            <div class="flex items-center justify-between text-xs">
-              ${tech.urgente ? '<span class="text-[11px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Agenda aberta hoje</span>' : '<span class="text-[11px] sm:text-xs text-slate-500 font-medium">Horários a combinar</span>'}
-              <span class="text-[11px] sm:text-xs text-slate-400">Atende toda Manaus</span>
+          <div class="pt-2 sm:pt-3 border-t border-slate-100 space-y-2">
+            <div class="flex items-center justify-between text-[10px] sm:text-xs">
+              ${tech.urgente ? '<span class="text-[10px] sm:text-xs text-emerald-600 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Agenda aberta</span>' : '<span class="text-[10px] sm:text-xs text-slate-400 font-medium">A combinar</span>'}
+              <span class="text-[10px] sm:text-xs text-slate-400 hidden sm:inline">Atende Manaus</span>
             </div>
-            <div class="grid grid-cols-5 sm:flex sm:items-center sm:justify-end gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2">
               <button type="button" onclick="openReviewModal('${tech.nome.replace(/'/g, "\\'")}', '${tech.id || ''}')"
-                class="col-span-2 sm:col-auto border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1"
+                class="p-1.5 sm:px-3 sm:py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-[11px] font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1 flex-shrink-0"
                 title="Avaliar este profissional">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm text-amber-500 fill">star</span>
-                <span>Avaliar</span>
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm text-amber-500 fill">star</span>
+                <span class="hidden sm:inline">Avaliar</span>
               </button>
               <button type="button" onclick="openRequestModal('${tech.nome.replace(/'/g, "\\'")}', '${tech.especialidade.replace(/'/g, "\\'")}', '${(tech.whatsapp || '').replace(/'/g, "\\'")}')"
-                class="col-span-3 sm:col-auto bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 sm:px-4 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5">
-                <span translate="no" class="notranslate material-symbols-outlined text-sm">calendar_month</span>
+                class="flex-1 bg-brand-600 hover:bg-brand-700 text-white text-[11px] sm:text-xs font-bold py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1">
+                <span translate="no" class="notranslate material-symbols-outlined text-xs sm:text-sm">calendar_month</span>
                 <span>Agendar</span>
               </button>
             </div>
